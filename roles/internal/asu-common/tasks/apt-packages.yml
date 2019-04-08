@@ -1,0 +1,7 @@
+- name: add required apt-get packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - clamav
+      - clamav-daemon

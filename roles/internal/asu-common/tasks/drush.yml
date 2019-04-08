@@ -1,0 +1,2 @@
+- name: Install clamav
+  command: "{{ drush_path }} --root {{ drupal_core_path }} -y en clamav"
