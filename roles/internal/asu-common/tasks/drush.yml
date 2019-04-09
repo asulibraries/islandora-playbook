@@ -15,3 +15,6 @@
 
 - name: Install asu_metadata
   command: "{{ drush_path }} --root {{ drupal_core_path }} -y en asu_metadata"
+
+- name: Install admin_toolbar
+  command: "{{ drush_path }} --root {{ drupal_core_path }} -y en admin_toolbar"

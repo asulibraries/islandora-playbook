@@ -1,5 +1,9 @@
-- name: Composer install clamav
+- name: Composer install dependencies
   composer:
     command: require
-    arguments: "drupal/clamav"
+    arguments: "{{ item }}"
     working_dir: "/var/www/html/drupal"
+  with_items:
+    - "drupal/clamav"
+    - "drupal/admin_toolbar"
+  become: no
