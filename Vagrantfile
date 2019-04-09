@@ -19,7 +19,7 @@ $vagrantUser = if $vagrantBox == "ubuntu/xenial64" then "ubuntu" else "vagrant" 
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |v|
-    v.name = "Islandora CLAW Ansible"
+    v.name = "Islandora CLAW Ansible ASU"
   end
 
   config.vm.hostname = $hostname
