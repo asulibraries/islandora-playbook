@@ -1,0 +1,8 @@
+- name: ensure clamav is running
+  service: name={{ item }} state=started
+  with_items:
+    - clamav-freshclam
+    - clamav-daemon
+  become: True
+  tags:
+    - clamav
