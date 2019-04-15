@@ -6,4 +6,5 @@
   with_items:
     - "drupal/clamav"
     - "drupal/admin_toolbar"
+    - "drupal/config_split"
   become: no
