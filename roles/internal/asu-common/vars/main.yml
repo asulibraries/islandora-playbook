@@ -1,1 +1,2 @@
 drush_path: "/usr/local/bin/drush"
+drupal_core_path: "/var/www/html/drupal/web"
