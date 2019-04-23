@@ -7,4 +7,5 @@
     php_version: "7.1"
 
   roles:
+    - geerlingguy.drush
     - asu-common
