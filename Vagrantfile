@@ -49,7 +49,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :ansible do |ansible|
-    # ansible-playbook playbook.yml -i inventory/vagrant -l all -e ansible_ssh_user=ubuntu -e islandora_distro=ubuntu/xenial64
+    # ansible-playbook playbook.yml -i inventory/vagrant -l all -e ansible_ssh_user=$vagrantUser -e islandora_distro=ubuntu/xenial64
     ansible.playbook = "playbook.yml"
     ansible.galaxy_role_file = "requirements.yml"
     ansible.galaxy_command = "ansible-galaxy install --role-file=%{role_file} --roles-path=roles/external"
