@@ -15,8 +15,7 @@ $virtualBoxDescription = ENV.fetch("ISLANDORA_VAGRANT_VIRTUALBOXDESCRIPTION", "I
 $vagrantBox = ENV.fetch("ISLANDORA_DISTRO", "ubuntu/xenial64")
 
 # On Ubuntu, user is ubuntu, on all others, user is vagrant
-# $vagrantUser = if $vagrantBox == "ubuntu/xenial64" then "ubuntu" else "vagrant" end
-$vagrantUser = "ubuntu"
+$vagrantUser = if $vagrantBox == "ubuntu/xenial64" then "ubuntu" else "vagrant" end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |v|
@@ -30,7 +29,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Configure home directory
   home_dir = "/home/" + $vagrantUser
-  config.ssh.username = $vagrantUser
 
   # Configure sync directory
   config.vm.synced_folder ".", home_dir + "/islandora"
@@ -51,6 +49,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :ansible do |ansible|
+    # ansible-playbook playbook.yml -i inventory/vagrant -l all -e ansible_ssh_user=ubuntu -e islandora_distro=ubuntu/xenial64
     ansible.playbook = "playbook.yml"
     ansible.galaxy_role_file = "requirements.yml"
     ansible.galaxy_command = "ansible-galaxy install --role-file=%{role_file} --roles-path=roles/external"
