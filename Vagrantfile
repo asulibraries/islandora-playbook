@@ -15,7 +15,8 @@ $virtualBoxDescription = ENV.fetch("ISLANDORA_VAGRANT_VIRTUALBOXDESCRIPTION", "I
 $vagrantBox = ENV.fetch("ISLANDORA_DISTRO", "ubuntu/xenial64")
 
 # On Ubuntu, user is ubuntu, on all others, user is vagrant
-$vagrantUser = if $vagrantBox == "ubuntu/xenial64" then "ubuntu" else "vagrant" end
+# $vagrantUser = if $vagrantBox == "ubuntu/xenial64" then "ubuntu" else "vagrant" end
+$vagrantUser = "ubuntu"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |v|
@@ -29,18 +30,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Configure home directory
   home_dir = "/home/" + $vagrantUser
+  config.ssh.username = $vagrantUser
 
   # Configure sync directory
   config.vm.synced_folder ".", home_dir + "/islandora"
-  config.vm.synced_folder "./claw-sandbox", "/var/www/html/drupal"
+  config.vm.synced_folder "./claw-sandbox", "/var/www/html/drupal", mount_options: ["dmode=775,fmode=777"]
 
-  config.vm.network :forwarded_port, guest: 8000, host: 8000 # Apache
-  config.vm.network :forwarded_port, guest: 8080, host: 8080 # Tomcat
-  config.vm.network :forwarded_port, guest: 3306, host: 3306 # MySQL
-  config.vm.network :forwarded_port, guest: 5432, host: 5432 # PostgreSQL
-  config.vm.network :forwarded_port, guest: 8983, host: 8983 # Solr
-  config.vm.network :forwarded_port, guest: 8161, host: 8161 # Activemq
-  config.vm.network :forwarded_port, guest: 8081, host: 8081 # API-X
+  config.vm.network :forwarded_port, guest: 8000, host: 18000 # Apache
+  config.vm.network :forwarded_port, guest: 8080, host: 18080 # Tomcat
+  config.vm.network :forwarded_port, guest: 3306, host: 13306 # MySQL
+  config.vm.network :forwarded_port, guest: 5432, host: 15432 # PostgreSQL
+  config.vm.network :forwarded_port, guest: 8983, host: 18983 # Solr
+  config.vm.network :forwarded_port, guest: 8161, host: 18161 # Activemq
+  config.vm.network :forwarded_port, guest: 8081, host: 18081 # API-X
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", $memory]
