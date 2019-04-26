@@ -17,6 +17,9 @@ drupal_composer_dependencies:
   - "islandora/carapace:dev-8.x-1.x"
   - "islandora/openseadragon:dev-8.x-1.x"
   - "islandora/islandora_demo:dev-8.x-1.x"
+  - "drupal/admin_toolbar"
+  - "drupal/clamav"
+  - "drupal/config_split"
 drupal_composer_project_package: "islandora/drupal-project:8.6.10"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
@@ -46,6 +49,10 @@ drupal_enable_modules:
   - pdf
   - islandora_core_feature
   - controlled_access_terms_default_configuration
+  - admin_toolbar
+  - config_split
+  - islandora_search
+  - clamav
 drupal_trusted_hosts:
   - ^localhost$
 drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"

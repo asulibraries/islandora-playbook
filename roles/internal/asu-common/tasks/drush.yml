@@ -1,8 +1,3 @@
-- name: Install clamav
-  command: "{{ drush_path }} --root {{ drupal_core_path }} -y en clamav"
-  args:
-    chdir: /var/www/html/drupal/web
-
 - name: Set clamav scan to daemon mode over unix socket
   command: "{{ drush_path }} --root {{ drupal_core_path }} -y config:set clamav.settings scan_mode 2"
   args:
@@ -29,21 +24,6 @@
 
 - name: Install asu_metadata
   command: "{{ drush_path }} --root {{ drupal_core_path }} -y en asu_metadata"
-  args:
-    chdir: /var/www/html/drupal/web
-
-- name: Install admin_toolbar
-  command: "{{ drush_path }} --root {{ drupal_core_path }} -y en admin_toolbar"
-  args:
-    chdir: /var/www/html/drupal/web
-
-- name: Install config_split
-  command: "{{ drush_path }} --root {{ drupal_core_path }} -y en config_split"
-  args:
-    chdir: /var/www/html/drupal/web
-
-- name: Install islandora_search
-  command: "{{ drush_path }} --root {{ drupal_core_path }} -y en islandora_search"
   args:
     chdir: /var/www/html/drupal/web
 

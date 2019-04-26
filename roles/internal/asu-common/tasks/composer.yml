@@ -1,10 +1,8 @@
-- name: Composer install dependencies
-  composer:
-    command: require
-    arguments: "{{ item }}"
-    working_dir: "/var/www/html/drupal"
-  with_items:
-    - "drupal/clamav"
-    - "drupal/admin_toolbar"
-    - "drupal/config_split"
-  become: no
+# - name: Composer install dependencies
+#   composer:
+#     command: require
+#     arguments: "{{ item }}"
+#     working_dir: "/var/www/html/drupal"
+#   with_items:
+#     - [insert here]
+#   become: no
