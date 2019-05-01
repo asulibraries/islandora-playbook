@@ -51,7 +51,6 @@ drupal_enable_modules:
   - controlled_access_terms_default_configuration
   - admin_toolbar
   - config_split
-  - islandora_search
   - clamav
 drupal_trusted_hosts:
   - ^localhost$
