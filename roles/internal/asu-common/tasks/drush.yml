@@ -22,10 +22,10 @@
     chdir: /var/www/html/drupal/web
 
 
-- name: Install asu_metadata
-  command: "{{ drush_path }} --root {{ drupal_core_path }} -y en asu_metadata"
-  args:
-    chdir: /var/www/html/drupal/web
+# - name: Install asu_metadata
+#   command: "{{ drush_path }} --root {{ drupal_core_path }} -y en asu_metadata"
+#   args:
+#     chdir: /var/www/html/drupal/web
 
 - name: Install islandora_search
   command: "{{ drush_path }} --root {{ drupal_core_path }} -y en islandora_search"
