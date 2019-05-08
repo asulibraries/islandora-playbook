@@ -32,8 +32,14 @@
   args:
     chdir: /var/www/html/drupal/web
 
-- name: set the UUID of the site so that the configuration system doesn't complain
-  command: '{{ drush_path }} --root {{ drupal_core_path }} config-set "system.site" uuid "9d8a3b2c-7a53-47f0-a53c-10dda41daf28"'
-  args:
-    chdir: /var/www/html/drupal/web
+# - name: set the UUID of the site so that the configuration system doesn't complain
+#   command: '{{ drush_path }} --root {{ drupal_core_path }} config-set "system.site" uuid "9d8a3b2c-7a53-47f0-a53c-10dda41daf28"'
+#   args:
+#     chdir: /var/www/html/drupal/web
 # drush config:import ?
+
+# - name: set the gemini_url in the islandora settings
+#   command: '{{ drush_path }} --root {{ drupal_core_path }} config-set "islandora.settings" gemini_url "http://localhost:8000/gemini"'
+
+# - name: select the bundle types to display the fedora URL by default
+#   command: '{{ drush_path }} --root {{ drupal_core_path }} config-set "islandora.settings" '

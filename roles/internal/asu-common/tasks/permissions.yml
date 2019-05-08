@@ -4,9 +4,3 @@
     owner: www-data
     group: www-data
     mode: 0775
-
-- name: create symlink from claw-playbook/claw-sandbox to /var/www/html/drupal/
-  file:
-    src: /home/ubuntu/islandora/claw-sandbox
-    dest: /var/www/html/drupal
-    state: link

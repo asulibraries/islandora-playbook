@@ -32,7 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Configure sync directory
   config.vm.synced_folder ".", home_dir + "/islandora"
-  # config.vm.synced_folder "./claw-sandbox", "/var/www/html/drupal", type: "rsync", rsync__exclude: "sites/default/files"
+  config.vm.synced_folder "./claw-sandbox", "/var/www/html/drupal", type: "rsync", rsync__exclude: "sites/default/files"
 
   config.vm.network :forwarded_port, guest: 8000, host: 8000 # Apache
   config.vm.network :forwarded_port, guest: 8080, host: 8080 # Tomcat
