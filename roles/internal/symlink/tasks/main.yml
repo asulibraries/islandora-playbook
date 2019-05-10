@@ -1,0 +1,8 @@
+---
+
+- name: symlink local claw-sandbox folder to drupal root
+  file:
+    src: /home/ubuntu/islandora/claw-sandbox
+    dest: /var/www/html/drupal
+    state: link
+    force: yes

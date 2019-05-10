@@ -14,6 +14,7 @@
     - geerlingguy.php
     - geerlingguy.php-mysql
     - geerlingguy.git
+    - symlink
     - geerlingguy.composer
     - geerlingguy.drush
     - geerlingguy.drupal-console
