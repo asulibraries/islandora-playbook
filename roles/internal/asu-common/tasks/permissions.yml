@@ -4,3 +4,4 @@
     owner: www-data
     group: www-data
     mode: 0775
+    state: directory
