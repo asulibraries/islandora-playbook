@@ -63,7 +63,7 @@ drupal_enable_modules:
   - controlled_access_terms_defaults
 drupal_trusted_hosts:
   - ^localhost$
-  - ^repo-dev.aws.lib.asu.edu$
+  - ^claw-test.aws.lib.asu.edu$
 drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"
 drupal_public_filesystem: "{{ drupal_core_path }}/sites/default/files"
 drupal_external_libraries_directory: "{{ drupal_core_path }}/libraries"
