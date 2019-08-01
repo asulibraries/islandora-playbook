@@ -1,6 +1,7 @@
 #solr_version: "6.6.0"
-
+# note that CLAW directory path is hardcoded elsewhere in the playbook so its best to leave this alone
 solr_cores:
   - CLAW
+  - islandora
 
 solr_install_path: /opt/solr

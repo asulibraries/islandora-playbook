@@ -2,5 +2,5 @@
 
 crayfish_db: "{{ claw_db }}"
 
-crayfish_milliner_drupal_base_url: http://claw-test.aws.lib.asu.edu:80
-crayfish_milliner_gemini_base_url: http://claw-test.aws.lib.asu.edu:80/gemini
+crayfish_milliner_drupal_base_url: http://repo-dev.aws.lib.asu.edu:80
+crayfish_milliner_gemini_base_url: http://repo-dev.aws.lib.asu.edu:80/gemini
