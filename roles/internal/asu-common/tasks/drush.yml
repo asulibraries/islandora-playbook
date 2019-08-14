@@ -43,3 +43,4 @@
 
 # - name: select the bundle types to display the fedora URL by default
 #   command: '{{ drush_path }} --root {{ drupal_core_path }} config-set "islandora.settings" '
+

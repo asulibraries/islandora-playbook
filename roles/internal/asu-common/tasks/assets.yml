@@ -1,0 +1,19 @@
+- name: make library dir
+  file:
+    path: "{{drupal_core_path}}/libraries/jquery-ui-slider-pips"
+    state: directory
+
+- name: make dist dir
+  file:
+    path: "{{drupal_core_path}}/libraries/jquery-ui-slider-pips/dist"
+    state: directory
+
+- name: get js
+  get_url:
+    url: https://github.com/simeydotme/jQuery-ui-Slider-Pips/tree/v1.11.3/dist/jquery-ui-slider-pips.min.js
+    dest: "{{drupal_core_path}}/libraries/jquery-ui-slider-pips/dist/jquery-ui-slider-pips.min.js"
+
+- name: get css
+  get_url:
+    url: https://github.com/simeydotme/jQuery-ui-Slider-Pips/tree/v1.11.3/dist/jquery-ui-slider-pips.min.css
+    dest: "{{drupal_core_path}}/libraries/jquery-ui-slider-pips/dist/jquery-ui-slider-pips.min.css"

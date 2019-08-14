@@ -21,6 +21,7 @@ drupal_composer_dependencies:
   - "islandora/carapace:1.0.0"
   - "islandora/islandora_defaults:dev-8.x-1.x"
   - "drupal/orcid"
+  - "drupal/bibcite"
 drupal_composer_project_package: "islandora/drupal-project:8.7"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
@@ -53,9 +54,10 @@ drupal_enable_modules:
   - config_split
   - clamav
   - features
-  - islandora_core_feature
+  - islandora_defaults
   - controlled_access_terms_defaults
   - orcid
+  - bibcite
 drupal_trusted_hosts:
   - ^localhost$
   - ^repo-dev.aws.lib.asu.edu$
