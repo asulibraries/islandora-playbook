@@ -58,6 +58,7 @@ drupal_enable_modules:
   - controlled_access_terms_defaults
   - orcid
   - bibcite
+  - admin_toolbar_tools
 drupal_trusted_hosts:
   - ^localhost$
   - ^repo-dev.aws.lib.asu.edu$
