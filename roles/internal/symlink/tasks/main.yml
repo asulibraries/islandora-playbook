@@ -1,8 +1,76 @@
----
+# ---
+# - name: make sure islandora directory exists
+#   file:
+#     path: /home/ubuntu/islandora
+#     state: directory
+#     owner: ubuntu
+#     group: www-data
+#   become_user: ubuntu
+# # - name: clone claw-app into /home/ubuntu/islandora/claw-app
+# #   git:
+# #     repo: 'https://github.com/asulibraries/islandora-repo'
+# #     dest: /home/ubuntu/islandora/claw-app
+# #   become_user: ubuntu
+# - name: symlink local claw-sandbox folder to drupal root
+#   file:
+#     src: /home/ubuntu/islandora/claw-app
+#     dest: /var/www/html/drupal
+#     state: link
+#     force: yes
 
-- name: symlink local claw-sandbox folder to drupal root
+- name: make the drupal root
   file:
-    src: /home/ubuntu/islandora/claw-sandbox
+    path: /var/www/html/drupal
+    state: directory
+    mode: 0775
+    owner: "{{webserver_app_user}}"
+    group: "{{webserver_app_user}}"
+  become: true
+
+- name: clone the ASU project
+  git:
+    repo: 'https://github.com/asulibraries/islandora-repo'
     dest: /var/www/html/drupal
-    state: link
-    force: yes
+
+- name: change composer permissions
+  file:
+    path: /var/www/html/drupal/composer.json
+    mode: 0777
+- name: change composer permissions
+  file:
+    path: /var/www/html/drupal/composer.lock
+    mode: 0777
+
+- name: change drupal root permissions
+  file:
+    path: /var/www/html/drupal
+    state: directory
+    recurse: yes
+    # owner: "{{webserver_app_user}}"
+    owner: vagrant
+    # group: "{{webserver_app_user}}"
+    group: vagrant
+
+- name: change vendor permissions
+  file:
+    path: /var/www/html/drupal/vendor
+    state: directory
+    recurse: yes
+    mode: 0775
+    # owner: "{{webserver_app_user}}"
+    # group: "{{webserver_app_user}}"
+    owner: vagrant
+    group: vagrant
+- name: Run composer install if composer.json
+  composer:
+    command: install
+    working_dir: /var/www/html/drupal
+  # become_user: "{{webserver_app_user}}"
+  become_user: vagrant
+- name: make sure we have islandora and up to date
+  composer:
+    command: update
+    arguments: islandora/islandora
+    working_dir: /var/www/html/drupal
+  become_user: vagrant
+
