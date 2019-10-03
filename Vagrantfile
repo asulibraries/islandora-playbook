@@ -19,7 +19,7 @@ $vagrantUser = if $vagrantBox == "ubuntu/bionic64" then "ubuntu" else "vagrant" 
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |v|
-    v.name = "Islandora CLAW Ansible ASU - new"
+    v.name = "Islandora CLAW Ansible ASU"
   end
 
   config.vm.hostname = $hostname
@@ -32,7 +32,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Configure sync directory
   config.vm.synced_folder ".", home_dir + "/islandora"
-  config.vm.synced_folder "./claw-sandbox/web/sites/default/files", "/var/www/html/drupal/web/sites/default/files", owner: "www-data", group: "www-data", mode: 0775
+  # config.vm.synced_folder "./claw-app/web/sites/default/files", home_dir + "/islandora/claw-app/web/sites/default/files", owner: "www-data", group: "www-data", mode: 0777, disabled: false
+  # config.vm.synced_folder "./islandora", "/var/www/html/drupal/web/modules/contrib/islandora", disabled: true
 
   config.vm.network :forwarded_port, guest: 8000, host: 8000 # Apache
   config.vm.network :forwarded_port, guest: 8080, host: 8080 # Tomcat
