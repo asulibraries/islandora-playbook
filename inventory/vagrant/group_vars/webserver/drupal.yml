@@ -21,7 +21,18 @@ drupal_composer_dependencies:
   - "islandora/carapace:1.0.0"
   - "islandora/islandora_defaults:dev-8.x-1.x"
   - "drupal/orcid"
+  - "drupal/message"
+  - "drupal/message_digest"
+  - "drupal/message_subscribe_email"
+  # - "drupal/bibcite"
   # drupal/search_api_federated_solr
+  # https://github.com/mjordan/islandora_bagger //generates bags
+  # https://github.com/roblib/lc_subject_field
+  # https://github.com/UNLV-Libraries/archivesspace-drupal
+  # https://github.com/mjordan/islandora_workbench
+  # https://github.com/roblib/islandora_text_extraction
+  # https://github.com/mjordan/islandora_riprap
+  # https://github.com/mjordan/islandora_workbench
 drupal_composer_project_package: "islandora/drupal-project:8.7"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
@@ -50,14 +61,15 @@ drupal_enable_modules:
   - matomo
   - pdf
   - islandora_core_feature
+  - islandora_defaults
   - admin_toolbar
   - config_split
   - clamav
   - features
-  - islandora_core_feature
   - controlled_access_terms_defaults
-  - orcid
   - admin_toolbar_tools
+  # - orcid
+  # - bibcite
 drupal_trusted_hosts:
   - ^localhost$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
