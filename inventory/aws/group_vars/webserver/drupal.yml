@@ -14,14 +14,26 @@ drupal_composer_dependencies:
   - "drupal/content_browser:^1.0@alpha"
   - "drupal/matomo:^1.7"
   - "drupal/pdf:1.x-dev"
-  - "drupal/admin_toolbar"
   - "drupal/clamav"
   - "drupal/features"
   - "drupal/config_split"
-  - "islandora/carapace:1.0.0"
+  - "drupal/admin_toolbar:^2.0"
+  - "drupal/rest_oai_pmh:^1.0"
+  - "islandora/carapace:dev-8.x-3.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
   - "drupal/orcid"
-  - "drupal/bibcite"
+  - "drupal/message"
+  - "drupal/message_digest"
+  - "drupal/message_subscribe_email"
+  # - "drupal/bibcite"
+  # drupal/search_api_federated_solr
+  # https://github.com/mjordan/islandora_bagger //generates bags
+  # https://github.com/roblib/lc_subject_field
+  # https://github.com/UNLV-Libraries/archivesspace-drupal
+  # https://github.com/mjordan/islandora_workbench
+  # https://github.com/roblib/islandora_text_extraction
+  # https://github.com/mjordan/islandora_riprap
+  # https://github.com/mjordan/islandora_workbench
 drupal_composer_project_package: "islandora/drupal-project:8.7"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
@@ -49,26 +61,25 @@ drupal_enable_modules:
   - content_browser
   - matomo
   - pdf
-  - islandora_core_feature
   - admin_toolbar
   - config_split
   - clamav
   - features
+  - admin_toolbar_tools
+  # - orcid
+  # - bibcite
   - islandora_defaults
   - controlled_access_terms_defaults
-  - orcid
-  - bibcite
-  - admin_toolbar_tools
+  - islandora_breadcrumbs
+  - islandora_iiif
+  - islandora_oaipmh
 drupal_trusted_hosts:
   - ^localhost$
-  - ^repo-dev.aws.lib.asu.edu$
-  - ^35.163.77.215$
-  - ^ec2-35-163-77-215.us-west-2.compute.amazonaws.com$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
 drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"
 drupal_public_filesystem: "{{ drupal_core_path }}/sites/default/files"
 drupal_external_libraries_directory: "{{ drupal_core_path }}/libraries"
-fedora_base_url: "http://127.0.0.1:8080/fcrepo/rest/"
+fedora_base_url: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/fcrepo/rest/"
 drupal_jsonld_remove_format: true
 drupal_gemini_pseudo_bundles:
   - islandora_object:node
