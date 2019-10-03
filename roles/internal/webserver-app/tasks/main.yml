@@ -1,24 +1,24 @@
 ---
 
-- include: apache.yml
+- import_tasks: apache.yml
   when: webserver_app_apache
   tags:
     - webserver-app
     - webserver-app-apache
 
-- include: drupal.yml
+- import_tasks: drupal.yml
   when: webserver_app_drupal
   tags:
     - webserver-app
     - webserver-app-drupal
 
-- include: jwt.yml
+- import_tasks: jwt.yml
   when: webserver_app_jwt
   tags:
     - webserver-app
     - webserver-app-jwt
 
-- include: solr.yml
+- import_tasks: solr.yml
   when: webserver_app_drupal
   tags:
     - webserver-app
