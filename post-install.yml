@@ -9,16 +9,15 @@
     vagrant_user: "{% if ansible_os_family == 'RedHat' %}vagrant{% else %}ubuntu{% endif %}"
 
   tasks:
-
     - name: Install islandora_defaults module
-      command: "{{ drush_path }} --root {{ drupal_core_path }} -y en islandora_defaults"
+      command: "{{ drush_path }} --root {{ drupal_core_path }} -y en islandora_core_feature"
 
     - name: Import feature
       command: "{{ drush_path }} --root {{ drupal_core_path }} -y fim --bundle=islandora islandora_defaults"
-      
+
     - name: Add admin to fedoraAdmin role
       command: "{{ drush_path }} --root {{ drupal_core_path }} -y urol fedoraadmin admin"
-      
+
     - name: Install islandora_search
       command: "{{ drush_path }} --root {{ drupal_core_path }} -y en islandora_search"
 
@@ -45,7 +44,7 @@
             append=yes
 
     - name: Create the default files simpletest directory
-      file: 
+      file:
         path: "{{ drupal_public_filesystem }}/simpletest"
         state: directory
         owner: "{{ webserver_app_user }}"
@@ -54,7 +53,7 @@
         recurse: yes
 
     - name: Create the sites simpletest directory
-      file: 
+      file:
         path: "{{ drupal_core_path }}/sites/simpletest"
         state: directory
         owner: "{{ webserver_app_user }}"
@@ -91,4 +90,6 @@
 
     - name: Clear cache
       command: "{{ drush_path }} --root {{ drupal_core_path }} -y cr"
+      ignore_errors: yes
+      # this fails on AWS after timing out the SSH connection
 
