@@ -4,5 +4,8 @@
 #     arguments: "{{ item }}"
 #     working_dir: "/var/www/html/drupal"
 #   with_items:
-#     - [insert here]
+#     # - [insert here]
+#     # - https://github.com/asulibraries/islandora_handle.git
+#     # - https://github.com/asulibraries/islandora_status_page.git
 #   become: no
+# TODO fix this to install the github repos we want
