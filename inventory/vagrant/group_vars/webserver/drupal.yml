@@ -25,7 +25,15 @@ drupal_composer_dependencies:
   - "drupal/message"
   - "drupal/message_digest"
   - "drupal/message_subscribe_email"
-  # - "drupal/bibcite"
+  - "drupal/bibcite"
+  - "drupal/webform"
+  - "drupal/workbench"
+  - "drupal/schema_metatag"
+  - "drupal/address"
+  - "drupal/title_length"
+  - "drupal/migrate_run"
+  - "drupal/weight"
+  - "drupal/superfish"
   # drupal/search_api_federated_solr
   # https://github.com/mjordan/islandora_bagger //generates bags
   # https://github.com/roblib/lc_subject_field
@@ -66,13 +74,19 @@ drupal_enable_modules:
   - clamav
   - features
   - admin_toolbar_tools
-  # - orcid
-  # - bibcite
+  - orcid
+  - bibcite
   - islandora_defaults
   - controlled_access_terms_defaults
   - islandora_breadcrumbs
   - islandora_iiif
   - islandora_oaipmh
+  - workbench
+  - content_moderation
+  - webform
+  - schema_metatag
+  - jsonapi
+  - superfish
 drupal_trusted_hosts:
   - ^localhost$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
