@@ -1,9 +1,9 @@
 ---
 
 # Comment in to build Alpaca from source
-#  alpaca_from_source: yes
-#  alpaca_version: dev
-#  alpaca_clone_directory: /opt/alpaca
+ alpaca_from_source: yes
+ alpaca_version: dev
+ alpaca_clone_directory: /opt/alpaca
 
  triplestore_namespace: islandora
  alpaca_triplestore_base_url: "http://{{ hostvars[groups['tomcat'][0]].ansible_host  }}:8080/bigdata"
