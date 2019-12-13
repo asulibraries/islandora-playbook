@@ -1,19 +1,17 @@
-default ansible_host=35.163.77.215 ansible_user=ubuntu ansible_ssh_port=22 ansible_ssh_private_key_file='~/.ssh/ASUAWSDev.pem'
-
 [karaf]
-default
+34.222.121.97
 
 [database]
-default
+35.163.226.190
 
 [webserver]
-default
+35.163.226.190
 
 [tomcat]
-default
+52.13.108.39
 
 [solr]
-default
+54.213.20.233
 
 [crayfish]
-default
+34.222.121.97
