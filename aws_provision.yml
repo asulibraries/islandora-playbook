@@ -8,7 +8,7 @@
   vars:
     instance_type: t2.medium
     security_group: DEV-ASU-ALL
-    image: ami-0463cf08c755ef3e1
+    image: ami-06d51e91cea0dac8d
     keypair: repo-dev
     region: us-west-2
     count: 1
