@@ -34,6 +34,7 @@ drupal_composer_dependencies:
   - "drupal/migrate_run"
   - "drupal/weight"
   - "drupal/superfish"
+  - "drupal/at_tools"
   # drupal/search_api_federated_solr
   # https://github.com/mjordan/islandora_bagger //generates bags
   # https://github.com/roblib/lc_subject_field
@@ -86,13 +87,15 @@ drupal_enable_modules:
   - schema_metatag
   - jsonapi
   - superfish
+  - at_tools
+  - islandora_text_extraction_defaults
 drupal_trusted_hosts:
   - ^localhost$
-  - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
+  - 35.163.226.190
 drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"
 drupal_public_filesystem: "{{ drupal_core_path }}/sites/default/files"
 drupal_external_libraries_directory: "{{ drupal_core_path }}/libraries"
-fedora_base_url: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/fcrepo/rest/"
+fedora_base_url: "http://52.13.108.39:8080/fcrepo/rest/"
 drupal_jsonld_remove_format: true
 drupal_gemini_pseudo_bundles:
   - islandora_object:node
