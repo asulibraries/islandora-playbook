@@ -25,12 +25,14 @@
     mode: 0775
     owner: "{{webserver_app_user}}"
     group: "{{webserver_app_user}}"
+    force: no
   become: true
+  ignore_errors: yes
 
-- name: clone the ASU project
-  git:
-    repo: 'https://github.com/asulibraries/islandora-repo'
-    dest: /var/www/html/drupal
+# - name: clone the ASU project
+#   git:
+#     repo: 'https://github.com/asulibraries/islandora-repo'
+#     dest: /var/www/html/drupal
 
 - name: change composer permissions
   file:
@@ -47,9 +49,9 @@
     state: directory
     recurse: yes
     # owner: "{{webserver_app_user}}"
-    owner: vagrant
+    owner: ubuntu
     # group: "{{webserver_app_user}}"
-    group: vagrant
+    group: ubuntu
 
 - name: change vendor permissions
   file:
@@ -59,18 +61,18 @@
     mode: 0775
     # owner: "{{webserver_app_user}}"
     # group: "{{webserver_app_user}}"
-    owner: vagrant
-    group: vagrant
+    owner: ubuntu
+    group: ubuntu
 - name: Run composer install if composer.json
   composer:
     command: install
     working_dir: /var/www/html/drupal
-  # become_user: "{{webserver_app_user}}"
-  become_user: vagrant
+  become_user: "{{webserver_app_user}}"
+  become_user: ubuntu
 - name: make sure we have islandora and up to date
   composer:
     command: update
     arguments: islandora/islandora
     working_dir: /var/www/html/drupal
-  become_user: vagrant
+  become_user: ubuntu
 
