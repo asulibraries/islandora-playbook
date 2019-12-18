@@ -76,12 +76,12 @@ drupal_enable_modules:
   - admin_toolbar_tools
   - orcid
   - bibcite
+  - islandora_text_extraction_defaults
   - islandora_defaults
   - controlled_access_terms_defaults
   - islandora_breadcrumbs
   - islandora_iiif
   - islandora_oaipmh
-  - islandora_text_extraction_defaults
   - workbench
   - content_moderation
   - webform
