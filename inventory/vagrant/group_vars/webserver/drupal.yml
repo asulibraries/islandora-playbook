@@ -81,6 +81,7 @@ drupal_enable_modules:
   - islandora_breadcrumbs
   - islandora_iiif
   - islandora_oaipmh
+  - islandora_text_extraction_defaults
   - workbench
   - content_moderation
   - webform
