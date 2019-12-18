@@ -29,10 +29,17 @@
   become: true
   ignore_errors: yes
 
+- name: check if rules file exists
+  stat:
+    path: /var/www/html/drupal
+  register: drupal_exists
+
 - name: clone the ASU project
   git:
     repo: 'https://github.com/asulibraries/islandora-repo'
     dest: /var/www/html/drupal
+  when: drupal_exists.stat.exists == False
+
 
 - name: change composer permissions
   file:
@@ -48,9 +55,11 @@
     path: /var/www/html/drupal
     state: directory
     recurse: yes
-    owner: "{{webserver_app_user}}"
+    owner: vagrant
+    group: vagrant
+    # owner: "{{webserver_app_user}}"
     # owner: ubuntu
-    group: "{{webserver_app_user}}"
+    # group: "{{webserver_app_user}}"
     # group: ubuntu
 
 - name: change vendor permissions
@@ -59,20 +68,23 @@
     state: directory
     recurse: yes
     mode: 0775
-    owner: "{{webserver_app_user}}"
-    group: "{{webserver_app_user}}"
+    owner: vagrant
+    group: vagrant
+    # owner: "{{webserver_app_user}}"
+    # group: "{{webserver_app_user}}"
     # owner: ubuntu
     # group: ubuntu
 - name: Run composer install if composer.json
   composer:
     command: install
     working_dir: /var/www/html/drupal
-  become_user: "{{webserver_app_user}}"
+#   become_user: "{{webserver_app_user}}"
   # become_user: ubuntu
+  become_user: vagrant
 - name: make sure we have islandora and up to date
   composer:
     command: update
     arguments: islandora/islandora
     working_dir: /var/www/html/drupal
   # become_user: ubuntu
-
+  become_user: vagrant

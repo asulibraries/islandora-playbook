@@ -82,6 +82,14 @@
   args:
     creates: "{{ drupal_external_libraries_directory }}/masonry"
 
+- name: Install configured modules with drush.
+  command: >
+    {{ drush_path }} pm-enable -y {{ drupal_enable_modules | join(" ") }}
+    --root={{ drupal_core_path }}
+  args:
+    chdir: "{{ drupal_core_path }}"
+  become: no
+
 # Set Matomo Settings
 - name: Set Matomo site id.
   command: "{{ drush_path }} --root {{ drupal_core_path }} -y config-set matomo.settings site_id 1"
