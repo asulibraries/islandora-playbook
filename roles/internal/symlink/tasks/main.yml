@@ -31,7 +31,7 @@
 
 - name: check if rules file exists
   stat:
-    path: /var/www/html/drupal
+    path: /var/www/html/drupal/web
   register: drupal_exists
 
 - name: clone the ASU project
