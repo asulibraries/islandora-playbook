@@ -21,4 +21,6 @@
     - geerlingguy.drupal
     - Islandora-Devops.drupal-openseadragon
     - webserver-app
+    - Islandora-Devops.riprap
+    - Islandora-Devops.bagger
     - Islandora-Devops.matomo
