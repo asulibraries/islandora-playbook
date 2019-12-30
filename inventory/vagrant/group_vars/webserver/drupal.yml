@@ -34,6 +34,7 @@ drupal_composer_dependencies:
   - "drupal/migrate_run"
   - "drupal/weight"
   - "drupal/superfish"
+  - "drupal/at_tools"
   # drupal/search_api_federated_solr
   # https://github.com/mjordan/islandora_bagger //generates bags
   # https://github.com/roblib/lc_subject_field

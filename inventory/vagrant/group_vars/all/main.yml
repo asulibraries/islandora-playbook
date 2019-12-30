@@ -39,3 +39,8 @@ mysql_users:
 # Used by both the webserver and crayfish role for CentOS.
 php_enablerepo: "remi-php72"
 php_packages_state: "latest"
+httpd_conf_directory: "/etc/apache2"
+httpd_conf_directory_enabled: "{{httpd_conf_directory}}/conf-enabled"
+drush_path: "/usr/local/bin/drush"
+crayfish_drupal_base_url: "http://{{ hostvars[groups['webserver'][0]].ansible_host }}:{{ apache_listen_port }}"
+crayfish_db_host: 127.0.0.1
