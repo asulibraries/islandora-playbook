@@ -102,3 +102,9 @@
 - src: https://github.com/Islandora-Devops/ansible-role-matomo
   name: Islandora-Devops.matomo
   version: 1.0.0
+
+- src: https://github.com/roblib/Islandora-Devops.riprap
+  name: Islandora-Devops.riprap
+
+- src: https://github.com/roblib/Islandora-Devops.bagger
+  name: Islandora-Devops.bagger
