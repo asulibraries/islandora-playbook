@@ -48,7 +48,7 @@ drupal_core_path: "{{ drupal_composer_install_dir }}/web"
 drupal_db_user: drupal8
 drupal_db_name: drupal8
 drupal_db_backend: "{{ claw_db }}"
-drupal_db_host: "127.0.0.1"
+drupal_db_host: "islandora-drupal.cvznsvixsvec.us-west-2.rds.amazonaws.com"
 drupal_domain: "claw.dev"
 drupal_site_name: "Islandora 8"
 drupal_install_profile: standard
@@ -76,6 +76,9 @@ drupal_enable_modules:
   - admin_toolbar_tools
   - orcid
   - bibcite
+  - islandora_core_feature
+  - islandora_text_extraction
+  - islandora_text_extraction_defaults
   - islandora_defaults
   - controlled_access_terms_defaults
   - islandora_breadcrumbs
@@ -87,15 +90,13 @@ drupal_enable_modules:
   - schema_metatag
   - jsonapi
   - superfish
-  - at_tools
-  - islandora_text_extraction_defaults
 drupal_trusted_hosts:
   - ^localhost$
   - 35.163.226.190
 drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"
 drupal_public_filesystem: "{{ drupal_core_path }}/sites/default/files"
 drupal_external_libraries_directory: "{{ drupal_core_path }}/libraries"
-fedora_base_url: "http://52.13.108.39:8080/fcrepo/rest/"
+fedora_base_url: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/fcrepo/rest/"
 drupal_jsonld_remove_format: true
 drupal_gemini_pseudo_bundles:
   - islandora_object:node

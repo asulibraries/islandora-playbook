@@ -1,17 +1,22 @@
+default ansible_host=35.163.226.190 ansible_user=ubuntu ansible_ssh_port=22 ansible_ssh_private_key_file='~/.ssh/Islandora-Dev.pem'
+karaf ansible_host=34.222.121.97 ansible_user=ubuntu ansible_ssh_port=22 ansible_ssh_private_key_file='~/.ssh/Islandora-Dev.pem'
+tomcat ansible_host=52.13.108.39 ansible_user=ubuntu ansible_ssh_port=22 ansible_ssh_private_key_file='~/.ssh/Islandora-Dev.pem'
+solr ansible_host=54.213.20.233 ansible_user=ubuntu ansible_ssh_port=22 ansible_ssh_private_key_file='~/.ssh/Islandora-Dev.pem'
+
 [karaf]
-34.222.121.97
+karaf
 
 [database]
-35.163.226.190
+default
 
 [webserver]
-35.163.226.190
+default
 
 [tomcat]
-52.13.108.39
+tomcat
 
 [solr]
-54.213.20.233
+solr
 
 [crayfish]
-34.222.121.97
+karaf
