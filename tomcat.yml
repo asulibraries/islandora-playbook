@@ -13,6 +13,7 @@
       java_packages:
         - java-1.8.0-openjdk
     - Islandora-Devops.tomcat8
+    - geerlingguy.mysql
     - Islandora-Devops.fcrepo
     - Islandora-Devops.fcrepo-syn
     - Islandora-Devops.blazegraph
