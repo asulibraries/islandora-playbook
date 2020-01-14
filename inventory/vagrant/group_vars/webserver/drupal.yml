@@ -43,6 +43,7 @@ drupal_composer_dependencies:
   # https://github.com/roblib/islandora_text_extraction
   # https://github.com/mjordan/islandora_riprap
   # https://github.com/mjordan/islandora_workbench
+  - "islandora-rdm/islandora_fits:dev-master"
 drupal_composer_project_package: "islandora/drupal-project:8.8.1"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
@@ -82,6 +83,8 @@ drupal_enable_modules:
   - islandora_text_extraction_defaults
   - islandora_defaults
   - controlled_access_terms_defaults
+  - islandora_defaults
+  - islandora_fits
   - islandora_breadcrumbs
   - islandora_iiif
   - islandora_oaipmh
