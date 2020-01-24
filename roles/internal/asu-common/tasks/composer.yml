@@ -9,3 +9,8 @@
 #     # - https://github.com/asulibraries/islandora_status_page.git
 #   become: no
 # TODO fix this to install the github repos we want
+# - name: clone islandora_whole_object
+#   git:
+#     dest: /var/www/html/drupal/web/modules/contrib/islandora_whole_object
+#     repo: https://github.com/mjordan/islandora_whole_object
+

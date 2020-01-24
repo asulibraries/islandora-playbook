@@ -55,12 +55,10 @@
     path: /var/www/html/drupal
     state: directory
     recurse: yes
-    owner: vagrant
-    group: vagrant
+    owner: "{{ drupal_owner }}"
+    group: "{{ drupal_group }}"
     # owner: "{{webserver_app_user}}"
-    # owner: ubuntu
     # group: "{{webserver_app_user}}"
-    # group: ubuntu
 
 - name: change vendor permissions
   file:
@@ -68,23 +66,38 @@
     state: directory
     recurse: yes
     mode: 0775
-    owner: vagrant
-    group: vagrant
+    owner: "{{ drupal_owner }}"
+    group: "{{ drupal_group }}"
     # owner: "{{webserver_app_user}}"
     # group: "{{webserver_app_user}}"
-    # owner: ubuntu
-    # group: ubuntu
 - name: Run composer install if composer.json
   composer:
     command: install
     working_dir: /var/www/html/drupal
 #   become_user: "{{webserver_app_user}}"
-  # become_user: ubuntu
-  become_user: vagrant
+  become_user: "{{ drupal_owner }}"
 - name: make sure we have islandora and up to date
   composer:
     command: update
     arguments: islandora/islandora
     working_dir: /var/www/html/drupal
-  # become_user: ubuntu
-  become_user: vagrant
+#   become_user: "{{webserver_app_user}}"
+  become_user: "{{ drupal_owner }}"
+
+- name: make sure we have controlled_access_terms and up to date
+  composer:
+    command: update
+    arguments: islandora/controlled_access_terms
+    working_dir: /var/www/html/drupal
+#   become_user: "{{webserver_app_user}}"
+  become_user: "{{ drupal_owner }}"
+
+- name: make private files directory
+  file:
+    path: "{{ drupal_private_dir }}"
+    state: directory
+    owner: "{{webserver_app_user}}"
+    group: "{{webserver_app_user}}"
+    mode: 0775
+# TODO change the settings.php file to reflect
+
