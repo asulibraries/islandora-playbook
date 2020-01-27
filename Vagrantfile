@@ -7,9 +7,15 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.require_version ">= 2.0.1"
 
 $cpus   = ENV.fetch("ISLANDORA_VAGRANT_CPUS", "1")
+<<<<<<< HEAD
 $memory = ENV.fetch("ISLANDORA_VAGRANT_MEMORY", "8192")
 $hostname = ENV.fetch("ISLANDORA_VAGRANT_HOSTNAME", "claw")
 $virtualBoxDescription = ENV.fetch("ISLANDORA_VAGRANT_VIRTUALBOXDESCRIPTION", "IslandoraCLAW")
+=======
+$memory = ENV.fetch("ISLANDORA_VAGRANT_MEMORY", "4096")
+$hostname = ENV.fetch("ISLANDORA_VAGRANT_HOSTNAME", "islandora8")
+$virtualBoxDescription = ENV.fetch("ISLANDORA_VAGRANT_VIRTUALBOXDESCRIPTION", "Islandora 8")
+>>>>>>> upstream/dev
 
 # Available boxes are 'ubuntu/xenial64' and 'centos/7'
 $vagrantBox = ENV.fetch("ISLANDORA_DISTRO", "ubuntu/bionic64")
