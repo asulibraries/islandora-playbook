@@ -63,3 +63,11 @@ crayfish_db: "{{ claw_db }}"
 fedora_base_url: "http://52.13.108.39:8080/fcrepo/rest/"
 crayfish_fedora_base_url: "http://52.13.108.39:8080/fcrepo/rest/"
 crayfish_gemini_fedora_base_url: "{{ crayfish_fedora_base_url }}"
+s3fs:
+  source: "https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.85.tar.gz"
+  buckets:
+    - mountpoint: /mnt/s3fs
+      bucket: s3fs
+      accessKeyId: "{{ aws_access_key }}"
+      secretAccessKey: "{{ aws_secret_key }}"
+      options: "allow_other,use_cache=/tmp,max_stat_cache_size=100000,uid=33,gid=33,umask=002,url=https://asulibdev-islandora-bucket.s3.amazonaws.com"
