@@ -37,13 +37,8 @@ drupal_composer_dependencies:
   - "drupal/weight"
   - "drupal/superfish"
   - "drupal/at_tools"
-  # drupal/search_api_federated_solr
-  # https://github.com/mjordan/islandora_bagger //generates bags
   # https://github.com/roblib/lc_subject_field
   # https://github.com/UNLV-Libraries/archivesspace-drupal
-  # https://github.com/mjordan/islandora_workbench
-  # https://github.com/roblib/islandora_text_extraction
-  # https://github.com/mjordan/islandora_riprap
   # https://github.com/mjordan/islandora_workbench
   - "islandora-rdm/islandora_fits:dev-master"
 drupal_composer_project_package: "islandora/drupal-project:8.8.1"
@@ -97,6 +92,8 @@ drupal_enable_modules:
   - schema_metatag
   - jsonapi
   - superfish
+  - persistent_identifiers
+  - hdl
 drupal_trusted_hosts:
   - ^localhost$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
