@@ -103,7 +103,7 @@
   name: Islandora-Devops.matomo
   version: master
 
-- src: https://github.com/roblib/Islandora-Devops.riprap
+- src: https://github.com/asulibraries/Islandora-Devops.riprap
   name: Islandora-Devops.riprap
 
 - src: https://github.com/asulibraries/Islandora-Devops.bagger
