@@ -20,6 +20,7 @@ drupal_composer_dependencies:
   - "drupal/config_split"
   - "drupal/admin_toolbar:^2.0"
   - "drupal/rest_oai_pmh:^1.0"
+  - "drupal/transliterate_filenames:^1.3"
   - "islandora/carapace:dev-8.x-3.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
   - "drupal/orcid"
@@ -82,6 +83,7 @@ drupal_enable_modules:
   - islandora_core_feature
   - islandora_text_extraction
   - islandora_text_extraction_defaults
+  - transliterate_filenames
   - islandora_defaults
   - controlled_access_terms_defaults
   - islandora_defaults
