@@ -118,9 +118,3 @@
     clone: yes
     update: yes
     version: master
-
-- name: enable persistent_identifiers
-  command: "{{ drush_path }} --root {{ drupal_core_path }} -y pm-enable persistent_identifiers"
-
-- name: enable hdl
-  command: "{{ drush_path }} --root {{ drupal_core_path }} -y pm-enable hdl"
