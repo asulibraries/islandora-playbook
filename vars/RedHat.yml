@@ -4,3 +4,4 @@ php_packages_extra:
   - php-mysql
   - php-pgsql
   - php-mbstring
+  - php-zip

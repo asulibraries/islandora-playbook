@@ -106,7 +106,7 @@
 - src: https://github.com/roblib/Islandora-Devops.riprap
   name: Islandora-Devops.riprap
 
-- src: https://github.com/roblib/Islandora-Devops.bagger
+- src: https://github.com/asulibraries/Islandora-Devops.bagger
   name: Islandora-Devops.bagger
 
 - src: https://github.com/Aplyca/ansible-role-s3fs
