@@ -1,5 +1,4 @@
 - import_tasks: apt-packages.yml
-- import_tasks: modules.yml
 - import_tasks: clamav.yml
 - import_tasks: drush.yml
   vars:

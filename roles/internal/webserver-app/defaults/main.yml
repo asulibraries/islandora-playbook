@@ -17,3 +17,5 @@ webserver_document_root: /var/www/html
 
 solr_cores:
   - ISLANDORA
+
+private_file_dir: "{{ webserver_document_root }}/private"

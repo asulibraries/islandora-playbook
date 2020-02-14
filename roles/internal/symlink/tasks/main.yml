@@ -101,3 +101,26 @@
     mode: 0775
 # TODO change the settings.php file to reflect
 
+# Clone the non-composer modules
+
+- name: clone ASU fork of islandora_bagger_integration
+  git:
+    dest: "{{drupal_core_path}}/modules/custom/islandora_bagger_integration"
+    repo: https://github.com/asulibraries/islandora_bagger_integration.git
+    clone: yes
+    update: yes
+    version: bag_node_action
+
+- name: clone ASU fork of persistent identifiers
+  git:
+    dest: "{{drupal_core_path}}/modules/contrib/persistent_identifiers"
+    repo: https://github.com/asulibraries/persistent_identifiers.git
+    clone: yes
+    update: yes
+    version: master
+
+- name: enable persistent_identifiers
+  command: "{{ drush_path }} --root {{ drupal_core_path }} -y pm-enable persistent_identifiers"
+
+- name: enable hdl
+  command: "{{ drush_path }} --root {{ drupal_core_path }} -y pm-enable hdl"
