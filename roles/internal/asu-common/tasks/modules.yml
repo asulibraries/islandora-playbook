@@ -1,0 +1,17 @@
+# Clone the non-composer modules
+
+- name: clone ASU fork of islandora_bagger_integration
+  git:
+    dest: {{drupal_core_path}}/modules/custom/islandora_bagger_integration
+    repo: https://github.com/asulibraries/islandora_bagger_integration.git
+    clone: yes
+    update: yes
+    version: bag_node_action
+
+- name: clone ASU fork of persistent identifiers
+  git:
+    dest: {{drupal_core_path}}/modules/contrib/persistent_identifiers
+    repo: https://github.com/asulibraries/persistent_identifiers.git
+    clone: yes
+    update: yes
+    version: master
