@@ -41,6 +41,7 @@ drupal_composer_dependencies:
   # https://github.com/UNLV-Libraries/archivesspace-drupal
   # https://github.com/mjordan/islandora_workbench
   - "islandora-rdm/islandora_fits:dev-master"
+  - "drupal/simple_sitemap"
 drupal_composer_project_package: "islandora/drupal-project:8.8.1"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
@@ -94,6 +95,7 @@ drupal_enable_modules:
   - superfish
   - persistent_identifiers
   - hdl
+  - simple_sitemap
 drupal_trusted_hosts:
   - ^localhost$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
