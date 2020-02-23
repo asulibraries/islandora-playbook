@@ -13,7 +13,7 @@ fcrepo_persistence: jdbc-mysql
 # Used for mysql or postgres object persistence.
 fcrepo_db_name: fcrepo
 fcrepo_db_user: fcrepo
-fcrepo_db_host: "127.0.0.1" #TODO CHANGE THIS
+fcrepo_db_host: "islandora-fedora.cvznsvixsvec.us-west-2.rds.amazonaws.com"
 fcrepo_db_port: "3306"
 fcrepo_db_password: "{{ fcrepo_db_password }}"
 fcrepo_db_root_user: "root"
