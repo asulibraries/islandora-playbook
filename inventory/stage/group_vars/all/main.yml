@@ -1,0 +1,48 @@
+---
+
+# Change selinux status to permissive
+disable_selinux: yes
+
+islandora_extra_ubuntu_packages:
+  - wget
+  - curl
+  - htop
+  - tree
+  - zsh
+  - fish
+  - unzip
+  - build-essential
+  - vim
+  - python3-mysqldb
+
+islandora_extra_centos_packages:
+  - wget
+  - curl
+  - tree
+  - zsh
+  - unzip
+  - vim
+  - make
+  - automake
+  - gcc
+  - gcc-c++
+  - kernel-devel
+
+postgresql_user: postgres
+drupal_db_user: drupal8
+drupal_db_name: drupal8
+
+mysql_users:
+  - name: "{{ drupal_db_user }}"
+    host: "%"
+    password: "{{ drupal_db_password }}"
+    priv: "{{ drupal_db_name }}.*:ALL"
+
+# Used by both the webserver and crayfish role for CentOS.
+php_enablerepo: "remi-php72"
+php_packages_state: "latest"
+httpd_conf_directory: "/etc/apache2"
+httpd_conf_directory_enabled: "{{httpd_conf_directory}}/conf-enabled"
+drush_path: "/usr/local/bin/drush"
+crayfish_drupal_base_url: "http://{{ hostvars[groups['webserver'][0]].ansible_host }}:{{ apache_listen_port }}"
+crayfish_db_host: 127.0.0.1
