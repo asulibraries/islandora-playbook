@@ -4,8 +4,8 @@ webserver_app: yes
 openseadragon_iiiv_set_var: yes
 openseadragon_iiiv_server: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/cantaloupe/iiif/2"
 
-drupal_owner: vagrant
-drupal_group: vagrant
+drupal_owner: ubuntu
+drupal_group: ubuntu
 php_post_max_size: "64M"
 
 
