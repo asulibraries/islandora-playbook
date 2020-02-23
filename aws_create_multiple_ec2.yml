@@ -245,7 +245,7 @@
         subnet: libdev-db-private-ips
         tags:
           Application: islandora
-      when: drupal_rds_instance|length < 1
+      when: drupal_rds_instance.instances|length < 1
 
     - name: check for Fedora RDS
       rds_instance_facts:
