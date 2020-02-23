@@ -227,7 +227,7 @@
         region: "{{ region }}"
         filters:
           "db-instance-id": islandora-drupal
-      register: rds_instance
+      register: drupal_rds_instance
 
     - name: create Drupal RDS
       rds:
@@ -238,16 +238,43 @@
         instance_type: db.t2.micro
         username: drupal8
         db_name: drupal8
-        password: "{{ drupal_db_password }}"
-        vpc_security_groups: sg-025cd95ef40eefa4c #DEV-ASU-ALL
+        password: "{ drupal_db_password }}"
+        vpc_security_groups: "{{ webserver_security_group.group_id }}"
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
         subnet: libdev-db-private-ips
         tags:
           Application: islandora
-      when: rds_instance|length < 1
+      when: drupal_rds_instance|length < 1
 
+    - name: check for Fedora RDS
+      rds_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "db-instance-id": islandora-fedora
+      register: fedora_rds_instance
+
+    - name: create Fedora RDS
+      rds:
+        command: create
+        instance_name: islandora-fedora
+        db_engine: MySQL
+        size: 10
+        instance_type: db.t2.micro
+        username: fcrepo
+        db_name: fcrepo
+        password: "{{ fcrepo_db_password }}"
+        vpc_security_groups: "{{ services_security_group.group_id }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        subnet: libdev-db-private-ips
+        tags:
+          Application: islandora
+      when: fedora_rds_instance|length < 1
   # ELB
 
 
