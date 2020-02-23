@@ -1,0 +1,255 @@
+- hosts: localhost #boto takes care of this?
+  connection: local
+  gather_facts: False
+  vars:
+    instance_type: t2.medium
+    security_group: DEV-SSH-ASU-IPs
+    image: ami-06d51e91cea0dac8d
+    keypair: Islandora-Dev
+    region: us-west-2
+    count: 1
+  vars_files:
+    - aws_keys.yml
+    - inventory/stage/group_vars/all/passwords.yml
+  tasks:
+    - name: get the webserver IP
+      ec2_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "tag:repository_purpose": islandora-split
+          "tag:Name": "Repo-Dev-Split-webserver"
+      register: webserver_instances
+
+    - name: get the services server IP
+      ec2_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "tag:repository_purpose": islandora-split
+          "tag:Name": "Repo-Dev-Split-services"
+      register: services_instances
+
+    - name: create ec2
+      ec2:
+        key_name: "{{ keypair }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        group: "{{ security_group }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image }}"
+        wait: true
+        region: "{{ region }}"
+        count: "{{ count }}"
+        vpc_subnet_id: subnet-0a175a933a579e7ea
+        instance_tags:
+          repository_purpose: islandora-split
+          Name: "Repo-Dev-Split-{{ item }}"
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 8
+            delete_on_termination: true
+      with_items:
+        - "webserver"
+        - "services"
+      register: ec2
+      when: (webserver_instances|length < 1) and (services_instances|length < 1)
+
+    - name: set the webserver static ip
+      ec2_eip:
+        device_id: "{{ item.instance_id }}"
+        ip: 35.163.77.215
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+      with_items: "{{ webserver_instances.instances }}"
+      retries: 5
+
+    - name: set the services static ip
+      ec2_eip:
+        device_id: "{{ item.instance_id }}"
+        ip: 35.166.140.245
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+      with_items: "{{ services_instances.instances }}"
+      retries: 5
+
+    - name: check for webserver security group
+      ec2_group_facts:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        filters:
+          "group-name": islandora-webserver
+      register: webserver_security_group
+
+    - name: create webserver security group
+      ec2_group:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        description: "security group for islandora webserver"
+        name: islandora-webserver
+        vpc_id: vpc-01f9ed4702108fef0
+        rules_egress:
+          - proto: all
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+        rules:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 8000
+            to_port: 8000
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 443
+            to_port: 443
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 3306
+            to_port: 3306
+            cidr_ip: 35.166.140.245/32
+      register: webserver_security_group
+
+    - name: assign webserver security group
+      ec2:
+        state: running
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        instance_ids:
+          - "{{ item.instance_id }}"
+        region: "{{ region }}"
+        groups:
+          - "{{ webserver_security_group.group_name }}"
+          - "{{ security_group }}"
+      with_items: "{{ webserver_instances.instances }}"
+
+    - name: check for services security group
+      ec2_group_facts:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        filters:
+          "group-name": islandora-services
+      register: services_security_group
+
+    # TODO LOCK THIS SERVER DOWN SIGNIFICANTLY MORE
+    # 172.31.16.0/20 ASU VPN 1
+    # 172.31.32.0/20 ASU VPN 2
+    # 149.169.0.0/16 ASU PUBLIC 1
+    # 129.219.0.0/16 ASU PUBLIC 2
+    # 209.147.128.0/18 ASU PUBLIC 3
+    # SSH port 22 should be set to
+    # 10.192.0.0/16 ASULIB
+    # both vpns
+    # 129.219.247.61/32 firewall device
+    # 10.220.21.38/32 PRTG
+    - name: create services security group
+      ec2_group:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        description: "security group for islandora services server"
+        name: islandora-services
+        vpc_id: vpc-01f9ed4702108fef0
+        rules_egress:
+          - proto: all
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+        rules:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 8080
+            to_port: 8080
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 443
+            to_port: 443
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 3306
+            to_port: 3306
+            cidr_ip: 35.163.77.215/32
+          - proto: tcp
+            from_port: 8161
+            to_port: 8161
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 61613
+            to_port: 61613
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 61616
+            to_port: 61616
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+          - proto: tcp
+            from_port: 8983
+            to_port: 8983
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+      register: services_security_group
+
+    - name: assign services security group
+      ec2:
+        state: running
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        instance_ids:
+          - "{{ item.instance_id }}"
+        region: "{{ region }}"
+        groups:
+          - "{{ services_security_group.group_name }}"
+          - "{{ security_group }}"
+      with_items: "{{ services_instances.instances }}"
+
+    - name: check for Drupal RDS
+      rds_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "db-instance-id": islandora-drupal
+      register: rds_instance
+
+    - name: create Drupal RDS
+      rds:
+        command: create
+        instance_name: islandora-drupal
+        db_engine: MySQL
+        size: 10
+        instance_type: db.t2.micro
+        username: drupal8
+        db_name: drupal8
+        password: "{{ drupal_db_password }}"
+        vpc_security_groups: sg-025cd95ef40eefa4c #DEV-ASU-ALL
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        subnet: libdev-db-private-ips
+        tags:
+          Application: islandora
+      when: rds_instance|length < 1
+
+  # ELB
+
+
+
+
