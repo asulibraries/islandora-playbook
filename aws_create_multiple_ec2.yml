@@ -225,8 +225,7 @@
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
-        filters:
-          "db-instance-id": islandora-drupal
+        id: islandora-drupal
       register: drupal_rds_instance
 
     - name: create Drupal RDS
@@ -238,7 +237,7 @@
         instance_type: db.t2.micro
         username: drupal8
         db_name: drupal8
-        password: "{ drupal_db_password }}"
+        password: "{{ drupal_db_password }}"
         vpc_security_groups: "{{ webserver_security_group.group_id }}"
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
@@ -253,8 +252,7 @@
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
-        filters:
-          "db-instance-id": islandora-fedora
+        id: islandora-fedora
       register: fedora_rds_instance
 
     - name: create Fedora RDS
@@ -274,7 +272,7 @@
         subnet: libdev-db-private-ips
         tags:
           Application: islandora
-      when: fedora_rds_instance|length < 1
+      when: fedora_rds_instance.instances|length < 1
   # ELB
 
 
