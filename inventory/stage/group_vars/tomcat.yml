@@ -16,8 +16,9 @@ fcrepo_db_user: fcrepo
 fcrepo_db_host: "islandora-fedora.cvznsvixsvec.us-west-2.rds.amazonaws.com"
 fcrepo_db_port: "3306"
 fcrepo_db_password: "{{ fcrepo_db_password }}"
-fcrepo_db_root_user: "root"
-fcrepo_db_root_password: "{{ islandora_db_root_password }}"
+fcrepo_db_root_user: fcrepo
+fcrepo_db_root_password: "{{ fcrepo_db_password }}"
+cantaloupe_symlink: "/opt/cantaloupe"
 
 tomcat8_java_opts:
   - -Djava.awt.headless=true
