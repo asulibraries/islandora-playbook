@@ -1,0 +1,232 @@
+---
+
+# Change selinux status to permissive
+disable_selinux: yes
+
+islandora_extra_ubuntu_packages:
+  - wget
+  - curl
+  - htop
+  - tree
+  - zsh
+  - fish
+  - unzip
+  - build-essential
+  - vim
+  - python3-mysqldb
+
+islandora_extra_centos_packages:
+  - wget
+  - curl
+  - tree
+  - zsh
+  - unzip
+  - vim
+  - make
+  - automake
+  - gcc
+  - gcc-c++
+  - kernel-devel
+
+postgresql_user: postgres
+drupal_db_user: drupal8
+drupal_db_name: drupal8
+
+mysql_users:
+  - name: "{{ drupal_db_user }}"
+    host: "%"
+    password: "{{ drupal_db_password }}"
+    priv: "{{ drupal_db_name }}.*:ALL"
+
+# Used by both the webserver and crayfish role for CentOS.
+php_enablerepo: "remi-php72"
+php_packages_state: "latest"
+httpd_conf_directory: "/etc/apache2"
+httpd_conf_directory_enabled: "{{httpd_conf_directory}}/conf-enabled"
+drush_path: "/usr/local/bin/drush"
+crayfish_drupal_base_url: "http://{{ hostvars[groups['webserver'][0]] }}:{{ apache_listen_port }}"
+crayfish_db_host: 127.0.0.1
+drupal_composer_project_package: "islandora/drupal-project:8.8.1"
+
+crayfish_version_tag: dev
+crayfish_db: "{{ claw_db }}"
+
+crayfish_fedora_base_url: "http://{{ hostvars[groups['tomcat'][0]] }}:8080/fcrepo/rest"
+crayfish_gemini_base_url: "http://{{ hostvars[groups['webserver'][0]] }}/gemini"
+
+
+apache_listen_port: 80
+apache_create_vhosts: true
+apache_vhosts_filename: "islandora.conf"
+apache_remove_default_vhost: true
+apache_vhosts:
+  - servername: "claw.dev"
+    documentroot: "/var/www/html/drupal/web"
+    allow_override: All
+    options: -Indexes +FollowSymLinks
+
+
+
+drupal_build_composer_project: true
+drupal_composer_install_dir: /var/www/html/drupal
+drupal_core_owner: "{{ ansible_user }}"
+drupal_composer_dependencies:
+  - "zaporylie/composer-drupal-optimizations:^1.0"
+  - "drupal/console:~1.0"
+  - "drupal/devel:^2.0"
+  - "drush/drush:^9.0"
+  - "drupal/rdfui:^1.0-beta1"
+  - "drupal/restui:^1.16"
+  - "drupal/search_api_solr:^2.0"
+  - "drupal/facets:^1.3"
+  - "drupal/content_browser:^1.0@alpha"
+  - "drupal/matomo:^1.7"
+  - "drupal/pdf:1.x-dev"
+  - "drupal/clamav"
+  - "drupal/features"
+  - "drupal/config_split"
+  - "drupal/admin_toolbar:^2.0"
+  - "drupal/rest_oai_pmh:^1.0"
+  - "drupal/transliterate_filenames:^1.3"
+  - "islandora/carapace:dev-8.x-3.x"
+  - "islandora/islandora_defaults:dev-8.x-1.x"
+  - "drupal/orcid"
+  # - "drupal/message"
+  # - "drupal/message_digest"
+  # - "drupal/message_subscribe_email"
+  - "drupal/bibcite"
+  - "drupal/webform"
+  - "drupal/workbench"
+  - "drupal/schema_metatag"
+  - "drupal/address"
+  - "drupal/title_length"
+  - "drupal/migrate_run"
+  - "drupal/weight"
+  - "drupal/superfish"
+  - "drupal/at_tools"
+  # https://github.com/roblib/lc_subject_field
+  # https://github.com/UNLV-Libraries/archivesspace-drupal
+  # https://github.com/mjordan/islandora_workbench
+  - "islandora-rdm/islandora_fits:dev-master"
+  - "drupal/simple_sitemap"
+drupal_composer_project_package: "islandora/drupal-project:8.8.1"
+drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
+drupal_core_path: "{{ drupal_composer_install_dir }}/web"
+drupal_db_user: drupal8
+drupal_db_name: drupal8
+drupal_db_backend: "{{ claw_db }}"
+drupal_db_host: "islandora-drupal.cvznsvixsvec.us-west-2.rds.amazonaws.com"
+drupal_domain: "claw.dev"
+drupal_site_name: "Islandora 8"
+drupal_install_profile: standard
+drupal_account_name: admin
+drupal_enable_modules:
+  - rdf
+  - responsive_image
+  - syslog
+  - serialization
+  - basic_auth
+  - rest
+  - simpletest
+  - restui
+  - devel
+  - search_api_solr
+  - search_api_solr_defaults
+  - facets
+  - content_browser
+  - matomo
+  - pdf
+  - admin_toolbar
+  - config_split
+  - clamav
+  - features
+  - admin_toolbar_tools
+  - orcid
+  - bibcite
+  - islandora_core_feature
+  - islandora_text_extraction
+  - islandora_text_extraction_defaults
+  - transliterate_filenames
+  - islandora_defaults
+  - controlled_access_terms_defaults
+  - islandora_defaults
+  - islandora_fits
+  - islandora_breadcrumbs
+  - islandora_iiif
+  - islandora_oaipmh
+  - workbench
+  - content_moderation
+  - webform
+  - schema_metatag
+  - jsonapi
+  - superfish
+  - persistent_identifiers
+  - hdl
+  - simple_sitemap
+drupal_trusted_hosts:
+  - ^localhost$
+  - "{{ hostvars[groups['webserver'][0]] }}"
+drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"
+drupal_public_filesystem: "{{ drupal_core_path }}/sites/default/files"
+drupal_external_libraries_directory: "{{ drupal_core_path }}/libraries"
+fedora_base_url: "http://{{ hostvars[groups['tomcat'][0]] }}:8080/fcrepo/rest/asu_ir"
+drupal_jsonld_remove_format: true
+drupal_gemini_pseudo_bundles:
+  - islandora_object:node
+  - image:media
+  - file:media
+  - audio:media
+  - video:media
+openseadragon_composer_item: "islandora/openseadragon:dev-8.x-1.x"
+
+
+webserver_app: yes
+openseadragon_iiiv_set_var: yes
+openseadragon_iiiv_server: "http://{{ hostvars[groups['tomcat'][0]] }}:8080/cantaloupe/iiif/2"
+
+drupal_owner: ubuntu
+drupal_group: ubuntu
+php_post_max_size: "64M"
+
+
+tomcat8_users:
+  - username: islandora
+    password: "{{ islandora_tomcat_password }}"
+    roles:
+      - manager-gui
+tomcat8_java_opts:
+  - -Djava.awt.headless=true
+  - -Dfile.encoding=UTF-8
+  - -server
+  - -Xms512m
+  - -Xmx1024m
+  - -XX:NewSize=256m
+  - -XX:MaxNewSize=256m
+  - -XX:PermSize=256m
+  - -XX:MaxPermSize=256m
+  - -Dcantaloupe.config={{ cantaloupe_symlink }}/cantaloupe.properties
+  - -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true
+
+cantaloupe_deploy_war: yes
+cantaloupe_deploy_war_path: "{{ tomcat8_home }}/webapps"
+cantaloupe_user: tomcat8
+cantaloupe_group: tomcat8
+cantaloupe_admin_enabled: "true"
+cantaloupe_OpenJpegProcessor_path_to_binaries: /usr/local/bin
+cantaloupe_log_application_ConsoleAppender_enabled: "false"
+cantaloupe_log_application_FileAppender_enabled: "true"
+cantaloupe_log_application_FileAppender_pathname: "{{ cantaloupe_log_path }}/application.log"
+cantaloupe_log_access_FileAppender_enabled: "true"
+cantaloupe_log_access_FileAppender_pathname: "{{ cantaloupe_log_path }}/access.log"
+cantaloupe_FilesystemResolver_BasicLookupStrategy_path_prefix: /var/www/html/drupal/web/
+cantaloupe_processor_jp2: OpenJpegProcessor
+cantaloupe_cache_source: FilesystemCache
+cantaloupe_cache_derivative: FilesystemCache
+cantaloupe_create_FilesystemCache_dir: yes
+cantaloupe_resolver_static: HttpResolver
+cantaloupe_HttpResolver_BasicLookupStrategy_url_prefix: ""
+
+
+matomo_host: islandora-matomo.cvznsvixsvec.us-west-2.rds.amazonaws.com
+matomo_db_user: matomo
+matomo_db_name: matomo
