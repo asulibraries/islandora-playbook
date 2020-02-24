@@ -117,7 +117,7 @@
           - proto: tcp
             from_port: 3306
             to_port: 3306
-            cidr_ip: 35.166.140.245/32
+            cidr_ip: 10.192.36.25/32
       register: webserver_security_group
 
     - name: assign webserver security group
@@ -184,7 +184,7 @@
           - proto: tcp
             from_port: 3306
             to_port: 3306
-            cidr_ip: 35.163.77.215/32
+            cidr_ip: 10.192.36.190/32
           - proto: tcp
             from_port: 8161
             to_port: 8161
@@ -273,7 +273,58 @@
         tags:
           Application: islandora
       when: fedora_rds_instance.instances|length < 1
+
+    - name: check for Matomo RDS
+      rds_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        id: islandora-matomo
+      register: matomo_rds_instance
+
+    - name: create Matomo RDS
+      rds:
+        command: create
+        instance_name: islandora-matomo
+        db_engine: MySQL
+        size: 10
+        instance_type: db.t2.micro
+        username: matomo
+        db_name: matomo
+        password: "{{ matomo_db_password }}"
+        vpc_security_groups: "{{ webserver_security_group.group_id }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        subnet: libdev-db-private-ips
+        tags:
+          Application: islandora
+      when: matomo_rds_instance.instances|length < 1
   # ELB
+    # - name: create ELB
+    #   elb_lb:
+    #     name: "islandora-webserver-elb"
+    #     state: present
+    #     aws_secret_key: "{{ aws_secret_key }}"
+    #     aws_access_key: "{{ aws_access_key }}"
+    #     region: "{{ region }}"
+    #     zones:
+    #       - us-west-1a
+    #       - us-west-1b
+    #     instance_ids:
+    #       - "{{ item.instance_id }}"
+    #     listeners:
+    #       - protocol: http # options are http, https, ssl, tcp
+    #         load_balancer_port: 80
+    #         instance_port: 80
+    #         proxy_protocol: True
+    #       - protocol: https
+    #         load_balancer_port: 443
+    #         instance_protocol: http # optional, defaults to value of protocol setting
+    #         instance_port: 80
+    #         # ssl certificate required for https or ssl
+    #         ssl_certificate_id: "arn:aws:acm:us-west-2:380105785187:certificate/bfd85bd1-8ca5-4ba4-9b76-04da628e4725"
+    #   loop: webserver_instances
 
 
 
