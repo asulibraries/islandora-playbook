@@ -6,3 +6,4 @@
   become: True
   tags:
     - clamav
+  when: inventory_dir is regex("stage|prod|aws")

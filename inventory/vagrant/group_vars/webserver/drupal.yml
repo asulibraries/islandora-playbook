@@ -15,7 +15,6 @@ drupal_composer_dependencies:
   - "drupal/content_browser:^1.0@alpha"
   - "drupal/matomo:^1.7"
   - "drupal/pdf:1.x-dev"
-  - "drupal/clamav"
   - "drupal/features"
   - "drupal/config_split"
   - "drupal/admin_toolbar:^2.0"
@@ -71,7 +70,6 @@ drupal_enable_modules:
   - pdf
   - admin_toolbar
   - config_split
-  - clamav
   - features
   - admin_toolbar_tools
   - orcid
