@@ -53,7 +53,7 @@ apache_create_vhosts: true
 apache_vhosts_filename: "islandora.conf"
 apache_remove_default_vhost: true
 apache_vhosts:
-  - servername: "claw.dev"
+  - servername: "repo-dev.aws.lib.asu.edu"
     documentroot: "/var/www/html/drupal/web"
     allow_override: All
     options: -Indexes +FollowSymLinks
@@ -159,6 +159,9 @@ drupal_enable_modules:
 drupal_trusted_hosts:
   - ^localhost$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
+  - ^repo-dev.aws.lib.asu.edu$
+  - ^islandora-webserver-elb-652626103.us-west-2.elb.amazonaws.com$
+  - 10.192.36.25
 drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"
 drupal_public_filesystem: "{{ drupal_core_path }}/sites/default/files"
 drupal_external_libraries_directory: "{{ drupal_core_path }}/libraries"
