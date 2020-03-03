@@ -7,4 +7,5 @@ php_packages_extra:
   - php7.2-gd
   - php7.2-mbstring
   - php7.2-zip
+  - php7.2-intl
 

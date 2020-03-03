@@ -5,3 +5,4 @@ php_packages_extra:
   - php-pgsql
   - php-mbstring
   - php-zip
+  - php-intl
