@@ -15,7 +15,6 @@ fcrepo_db_name: fcrepo
 fcrepo_db_user: fcrepo
 fcrepo_db_host: "127.0.0.1"
 fcrepo_db_port: "3306"
-cantaloupe_symlink: "/opt/cantaloupe"
 
 tomcat8_java_opts:
   - -Djava.awt.headless=true
