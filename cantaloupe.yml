@@ -12,5 +12,5 @@
       when: "ansible_os_family == 'RedHat'"
       java_packages:
         - java-1.8.0-openjdk
-    - Islandora-Devops.tomcat8
     - Islandora-Devops.cantaloupe
+    - Islandora-Devops.tomcat8
