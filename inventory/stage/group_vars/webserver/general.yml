@@ -4,9 +4,10 @@ webserver_app: yes
 openseadragon_iiiv_set_var: yes
 openseadragon_iiiv_server: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/cantaloupe/iiif/2"
 
-drupal_owner: ubuntu
-drupal_group: ubuntu
+drupal_owner: www-data
+drupal_group: www-data
 php_post_max_size: "64M"
+drupal_composer_project_package: "islandora/drupal-project:8.8.1"
 
 
 cantaloupe_deploy_war: yes

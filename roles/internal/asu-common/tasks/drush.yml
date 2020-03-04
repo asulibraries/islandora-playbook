@@ -2,12 +2,15 @@
   command: "{{ drush_path }} --root {{ drupal_core_path }} -y config:set clamav.settings scan_mode 2"
   args:
     chdir: /var/www/html/drupal/web
+  when: inventory_dir is regex("stage|prod|aws")
+
 
 
 - name: Set path for clamav for unix socket
   command: "{{ drush_path }} --root {{ drupal_core_path }} -y config:set clamav.settings mode_daemon_unixsocket.unixsocket /var/run/clamav/clamd.ctl"
   args:
     chdir: /var/www/html/drupal/web
+  when: inventory_dir is regex("stage|prod|aws")
 
 
 - name: Disable CSS agg

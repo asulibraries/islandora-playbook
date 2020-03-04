@@ -12,6 +12,7 @@
     - aws_keys.yml
     - inventory/stage/group_vars/all/passwords.yml
   tasks:
+
     - name: get the webserver IP
       ec2_instance_facts:
         aws_secret_key: "{{ aws_secret_key }}"
@@ -77,6 +78,44 @@
       with_items: "{{ services_instances.instances }}"
       retries: 5
 
+    - name: check for elb security group
+      ec2_group_facts:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        filters:
+          "group-name": islandora-elb
+      register: elb_security_group
+
+    - name: create elb security group
+      ec2_group:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        description: "security group for islandora elb"
+        name: islandora-elb
+        vpc_id: vpc-01f9ed4702108fef0
+        rules_egress:
+          - proto: all
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+        rules:
+          - proto: tcp
+            ports:
+              - 80
+              - 8000
+              - 443
+            cidr_ip:
+              - 172.31.16.0/20 #ASU VPN 1
+              - 172.31.32.0/20 #ASU VPN 2
+              - 149.169.0.0/16 #ASU PUBLIC 1
+              - 129.219.0.0/16 #ASU PUBLIC 2
+              - 209.147.128.0/18 #ASU PUBLIC 3
+              - 10.192.36.25/32 #private IP
+              - 10.192.36.190/32 #private IP
+              - 35.166.140.245/32 #services public IP
+      register: elb_security_group
+
     - name: check for webserver security group
       ec2_group_facts:
         region: "{{ region }}"
@@ -100,20 +139,20 @@
             cidr_ipv6: ::/0
         rules:
           - proto: tcp
-            from_port: 80
-            to_port: 80
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
-          - proto: tcp
-            from_port: 8000
-            to_port: 8000
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
-          - proto: tcp
-            from_port: 443
-            to_port: 443
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
+            ports:
+              - 80
+              - 8000
+              - 443
+            cidr_ip:
+              - 172.31.16.0/20 #ASU VPN 1
+              - 172.31.32.0/20 #ASU VPN 2
+              - 149.169.0.0/16 #ASU PUBLIC 1
+              - 129.219.0.0/16 #ASU PUBLIC 2
+              - 209.147.128.0/18 #ASU PUBLIC 3
+              - 10.192.36.25/32 #private IP
+              - 10.192.36.190/32 #private IP
+              - 35.166.140.245/32 #services public IP
+            group_id: "{{ elb_security_group.group_id }}"
           - proto: tcp
             from_port: 3306
             to_port: 3306
@@ -133,6 +172,46 @@
           - "{{ security_group }}"
       with_items: "{{ webserver_instances.instances }}"
 
+    - name: create ELB target group
+      elb_target_group:
+        name: islandora-webserver-target
+        protocol: http
+        port: 80
+        state: present
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        vpc_id: vpc-01f9ed4702108fef0
+        health_check_path: /
+        successful_response_codes: "200"
+        targets:
+          - Id: "{{ item.instance_id }}"
+            Port: 80
+      with_items: "{{ webserver_instances.instances }}"
+      register: elb_target_group
+
+    - name: create ELB
+      elb_application_lb:
+        name: "islandora-webserver-elb"
+        state: present
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        subnets:
+          - subnet-02b1343bf83ae6322
+          - subnet-0a175a933a579e7ea
+        security_groups:
+          - "{{ elb_security_group.group_id }}"
+        listeners:
+          - Protocol: HTTP # options are http, https, ssl, tcp
+            Port: 80
+            # SslPolicy: ELBSecurityPolicy-2016-08
+            # Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
+            #   - CertificateArn: "arn:aws:acm:us-west-2:380105785187:certificate/bfd85bd1-8ca5-4ba4-9b76-04da628e4725"
+            DefaultActions:
+              - Type: forward # Required.
+                TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+
     - name: check for services security group
       ec2_group_facts:
         region: "{{ region }}"
@@ -142,12 +221,7 @@
           "group-name": islandora-services
       register: services_security_group
 
-    # TODO LOCK THIS SERVER DOWN SIGNIFICANTLY MORE
-    # 172.31.16.0/20 ASU VPN 1
-    # 172.31.32.0/20 ASU VPN 2
-    # 149.169.0.0/16 ASU PUBLIC 1
-    # 129.219.0.0/16 ASU PUBLIC 2
-    # 209.147.128.0/18 ASU PUBLIC 3
+    # TODO LOCK THIS FOR SSH
     # SSH port 22 should be set to
     # 10.192.0.0/16 ASULIB
     # both vpns
@@ -167,44 +241,27 @@
             cidr_ipv6: ::/0
         rules:
           - proto: tcp
-            from_port: 80
-            to_port: 80
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
-          - proto: tcp
-            from_port: 8080
-            to_port: 8080
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
-          - proto: tcp
-            from_port: 443
-            to_port: 443
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
+            ports:
+              - 80
+              - 8080
+              - 443
+              - 8161
+              - 61613
+              - 61616
+              - 8983
+            cidr_ip:
+              - 172.31.16.0/20 #ASU VPN 1
+              - 172.31.32.0/20 #ASU VPN 2
+              - 149.169.0.0/16 #ASU PUBLIC 1
+              - 129.219.0.0/16 #ASU PUBLIC 2
+              - 209.147.128.0/18 #ASU PUBLIC 3
+              - 10.192.36.25/32 #private IP services
+              - 10.192.36.190/32 #private IP
+              - 35.163.77.215/32 #webserver IP
           - proto: tcp
             from_port: 3306
             to_port: 3306
             cidr_ip: 10.192.36.190/32
-          - proto: tcp
-            from_port: 8161
-            to_port: 8161
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
-          - proto: tcp
-            from_port: 61613
-            to_port: 61613
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
-          - proto: tcp
-            from_port: 61616
-            to_port: 61616
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
-          - proto: tcp
-            from_port: 8983
-            to_port: 8983
-            cidr_ip: 0.0.0.0/0
-            cidr_ipv6: ::/0
       register: services_security_group
 
     - name: assign services security group
@@ -300,31 +357,8 @@
         tags:
           Application: islandora
       when: matomo_rds_instance.instances|length < 1
-  # ELB
-    # - name: create ELB
-    #   elb_lb:
-    #     name: "islandora-webserver-elb"
-    #     state: present
-    #     aws_secret_key: "{{ aws_secret_key }}"
-    #     aws_access_key: "{{ aws_access_key }}"
-    #     region: "{{ region }}"
-    #     zones:
-    #       - us-west-1a
-    #       - us-west-1b
-    #     instance_ids:
-    #       - "{{ item.instance_id }}"
-    #     listeners:
-    #       - protocol: http # options are http, https, ssl, tcp
-    #         load_balancer_port: 80
-    #         instance_port: 80
-    #         proxy_protocol: True
-    #       - protocol: https
-    #         load_balancer_port: 443
-    #         instance_protocol: http # optional, defaults to value of protocol setting
-    #         instance_port: 80
-    #         # ssl certificate required for https or ssl
-    #         ssl_certificate_id: "arn:aws:acm:us-west-2:380105785187:certificate/bfd85bd1-8ca5-4ba4-9b76-04da628e4725"
-    #   loop: webserver_instances
+
+
 
 
 

@@ -4,6 +4,7 @@
   become: yes
 
   roles:
+    - geerlingguy.apache
     - role: geerlingguy.java
       when: "ansible_os_family == 'Debian'"
       java_packages:
@@ -20,5 +21,6 @@
     - name: geerlingguy.repo-epel
       when: ansible_os_family == "RedHat"
     - Islandora-Devops.grok
+    - Islandora-Devops.cantaloupe
     - Islandora-Devops.activemq
     - Islandora-Devops.fits

@@ -42,7 +42,7 @@ drupal_composer_dependencies:
   # https://github.com/mjordan/islandora_workbench
   - "islandora-rdm/islandora_fits:dev-master"
   - "drupal/simple_sitemap"
-drupal_composer_project_package: "islandora/drupal-project:8.8.1"
+drupal_composer_project_package: "islandora/drupal-project:8.x-1.x"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
 drupal_db_user: drupal8
@@ -53,6 +53,7 @@ drupal_domain: "claw.dev"
 drupal_site_name: "Islandora 8"
 drupal_install_profile: standard
 drupal_account_name: admin
+drupal_deploy_dir: "{{ drupal_composer_install_dir }}"
 drupal_enable_modules:
   - rdf
   - responsive_image
@@ -99,6 +100,9 @@ drupal_enable_modules:
 drupal_trusted_hosts:
   - ^localhost$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
+  - ^repo-dev.aws.lib.asu.edu$
+  - ^islandora-webserver-elb-652626103.us-west-2.elb.amazonaws.com$
+  - 10.192.36.25
 drupal_trusted_hosts_file: "{{ drupal_core_path }}/sites/default/settings.php"
 drupal_public_filesystem: "{{ drupal_core_path }}/sites/default/files"
 drupal_external_libraries_directory: "{{ drupal_core_path }}/libraries"
