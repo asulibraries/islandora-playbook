@@ -105,15 +105,19 @@
               - 80
               - 8000
               - 443
-            cidr_ip:
-              - 172.31.16.0/20 #ASU VPN 1
-              - 172.31.32.0/20 #ASU VPN 2
-              - 149.169.0.0/16 #ASU PUBLIC 1
-              - 129.219.0.0/16 #ASU PUBLIC 2
-              - 209.147.128.0/18 #ASU PUBLIC 3
-              - 10.192.36.25/32 #private IP
-              - 10.192.36.190/32 #private IP
-              - 35.166.140.245/32 #services public IP
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+            #cidr_ip:
+             # - 0.0.0.0
+              #- 0.0.0.0/0
+              #- 172.31.16.0/20 #ASU VPN 1
+              #- 172.31.32.0/20 #ASU VPN 2
+              #- 149.169.0.0/16 #ASU PUBLIC 1
+              #- 129.219.0.0/16 #ASU PUBLIC 2
+              #- 209.147.128.0/18 #ASU PUBLIC 3
+              #- 10.192.36.25/32 #private IP
+              #- 10.192.36.190/32 #private IP
+              #- 35.166.140.245/32 #services public IP
       register: elb_security_group
 
     - name: check for webserver security group
