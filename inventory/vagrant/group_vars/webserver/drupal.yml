@@ -42,6 +42,7 @@ drupal_composer_dependencies:
   - "islandora-rdm/islandora_fits:dev-master"
   - "drupal/simple_sitemap"
   - "drupal/auto_entitylabel"
+  - "drupal/migrate_file"
 drupal_composer_project_package: "islandora/drupal-project:8.8.1"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
@@ -96,6 +97,7 @@ drupal_enable_modules:
   - hdl
   - simple_sitemap
   - auto_entitylabel
+  - migrate_file
 drupal_trusted_hosts:
   - ^localhost$
   - "{{ hostvars[groups['webserver'][0]].ansible_host }}"
