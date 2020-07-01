@@ -76,14 +76,6 @@
     working_dir: /var/www/html/drupal
 #   become_user: "{{webserver_app_user}}"
   become_user: "{{ drupal_owner }}"
-- name: make sure we have islandora and up to date
-  composer:
-    command: update
-    arguments: islandora/islandora
-    working_dir: /var/www/html/drupal
-#   become_user: "{{webserver_app_user}}"
-  become_user: "{{ drupal_owner }}"
-
 - name: make sure we have controlled_access_terms and up to date
   composer:
     command: update
