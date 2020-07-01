@@ -23,6 +23,8 @@ drupal_composer_dependencies:
   - "islandora/carapace:dev-8.x-3.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
   - "drupal/orcid"
+  - "drupal/diff"
+  - "drupal/rrssb"
   # - "drupal/message"
   # - "drupal/message_digest"
   # - "drupal/message_subscribe_email"
@@ -77,6 +79,8 @@ drupal_enable_modules:
   - admin_toolbar_tools
   - orcid
   - bibcite
+  - diff
+  - rrssb
   - islandora_core_feature
   - islandora_text_extraction
   - islandora_text_extraction_defaults
