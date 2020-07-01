@@ -22,6 +22,7 @@ drupal_composer_dependencies:
   - "drupal/transliterate_filenames:^1.3"
   - "islandora/carapace:dev-8.x-3.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
+  - "islandora-rdm/islandora_fits:dev-master"
   - "drupal/orcid"
   # - "drupal/message"
   # - "drupal/message_digest"
@@ -39,7 +40,6 @@ drupal_composer_dependencies:
   # https://github.com/roblib/lc_subject_field
   # https://github.com/UNLV-Libraries/archivesspace-drupal
   # https://github.com/mjordan/islandora_workbench
-  - "islandora-rdm/islandora_fits:dev-master"
   - "drupal/simple_sitemap"
   - "drupal/auto_entitylabel"
   - "drupal/migrate_file"
