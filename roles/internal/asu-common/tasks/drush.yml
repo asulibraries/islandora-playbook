@@ -47,3 +47,12 @@
 # - name: select the bundle types to display the fedora URL by default
 #   command: '{{ drush_path }} --root {{ drupal_core_path }} config-set "islandora.settings" '
 
+- name: enable asu_taxonomies module
+  command: '{{ drush_path }} --root {{drupal_core_path}} pm-enable asu_taxonomies'
+  args:
+    chdir: /var/www/html/drupal/web
+
+- name: run asu_taxonomies migrations
+  command: '{{ drush_path }} --root {{drupal_core_path}} migrate:import --group asu_taxonomies'
+  args:
+    chdir: /var/www/html/drupal/web
