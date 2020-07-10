@@ -8,7 +8,7 @@ tomcat8_users:
 
 # For production use either "jdbc-mysql" or "jdbc-postgresql"
 #fcrepo_persistence: file-simple
-fcrepo_persistence: jdbc-mysql
+fcrepo_persistence: jdbc-mysql-s3
 
 # Used for mysql or postgres object persistence.
 fcrepo_db_name: fcrepo
@@ -38,6 +38,9 @@ tomcat8_java_opts:
   - -Dcom.bigdata.rdf.sail.webapp.ConfigParams.propertyFile={{ blazegraph_home_dir }}/conf/RWStore.properties
   - -Dcantaloupe.config={{ cantaloupe_symlink }}/cantaloupe.properties
   - -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true
+  - -Daws.bucket={{fcrepo_aws_bucket}}
+  - -Daws.accessKeyId={{aws_access_key}}
+  - -Daws.secretKey={{aws_secret_key}}
 
 fcrepo_syn_tomcat_home: "{{ tomcat8_home }}"
 fcrepo_syn_default_public_key_path: "{{ fcrepo_syn_tomcat_home }}/conf/public.key"
@@ -48,6 +51,13 @@ fcrepo_syn_sites:
     anonymous: true
     default: true
     path: "{{ fcrepo_syn_default_public_key_path }}"
+    url: https://35.166.140.245
+  - algorithm: RS256
+    encoding: PEM
+    anonymous: true
+    default: true
+    path: "{{ fcrepo_syn_default_public_key_path }}"
+    url: https://35.163/77.215
 
 fcrepo_syn_tokens:
   - user: admin
