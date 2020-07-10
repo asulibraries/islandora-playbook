@@ -14,7 +14,7 @@ $virtualBoxDescription = ENV.fetch("ISLANDORA_VAGRANT_VIRTUALBOXDESCRIPTION", "I
 # Available boxes are 'islandora/8', ubuntu/bionic64' and 'centos/7'
 # Use 'ubuntu/bionic64' or 'centos/7' to build a dev environment from scratch.
 # Use 'islandora/8' if you just want to download a ready to run VM.
-$vagrantBox = ENV.fetch("ISLANDORA_DISTRO", "islandora/8")
+$vagrantBox = ENV.fetch("ISLANDORA_DISTRO", "elizoller/asurepo")
 
 # vagrant is the main user
 $vagrantUser = "vagrant"
@@ -54,7 +54,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--uartmode1", "disconnected" ]
   end
 
-  if $vagrantBox != "islandora/8" then
+  if $vagrantBox != "islandora/8" and $vagrantBox != "elizoller/asurepo" then
     config.vm.provision :ansible do |ansible|
       ansible.compatibility_mode = "auto"
       ansible.playbook = "playbook.yml"
