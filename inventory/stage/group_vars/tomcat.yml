@@ -41,6 +41,7 @@ tomcat8_java_opts:
   - -Daws.bucket={{fcrepo_aws_bucket}}
   - -Daws.accessKeyId={{aws_access_key}}
   - -Daws.secretKey={{aws_secret_key}}
+  - -Daws.endPoint="https://s3.wasabisys.com"
 
 fcrepo_syn_tomcat_home: "{{ tomcat8_home }}"
 fcrepo_syn_default_public_key_path: "{{ fcrepo_syn_tomcat_home }}/conf/public.key"
@@ -57,7 +58,12 @@ fcrepo_syn_sites:
     anonymous: true
     default: true
     path: "{{ fcrepo_syn_default_public_key_path }}"
-    url: https://35.163/77.215
+    url: https://35.163.77.215
+  - algorithm: RS256
+    encoding: PEM
+    anonymous: true
+    default: true
+    path: "{{ fcrepo_syn_default_public_key_path }}"
 
 fcrepo_syn_tokens:
   - user: admin

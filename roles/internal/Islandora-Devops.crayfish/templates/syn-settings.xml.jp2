@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- managed by Ansible -->
+<config version='1' header='X-Islandora'>
+	<site url='https://35.166.140.245' algorithm='RS256' encoding='PEM' anonymous='true' default='true' path='{{ crayfish_install_dir }}/public.key'/>
+    <token user='admin' roles='admin,fedoraAdmin'>
+      {{ crayfish_syn_token }}
+    </token>
+    <site url='https://35.163.77.215' algorithm='RS256' encoding='PEM' anonymous='true' default='true' path='{{ crayfish_install_dir }}/public.key' />
+</config>

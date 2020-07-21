@@ -1,0 +1,19 @@
+---
+- hosts: all
+
+  vars:
+    php_version: "7.3"
+    php_packages_extra:
+      - libapache2-mod-php7.3
+      - php7.3-mysql
+      - php7.3-pgsql
+
+  roles:
+    - geerlingguy.apache
+    - geerlingguy.php-versions
+    - geerlingguy.php
+    - geerlingguy.composer
+    - geerlingguy.git
+    - geerlingguy.postgresql
+    - role: role_under_test
+      crayfish_db: pgsql
