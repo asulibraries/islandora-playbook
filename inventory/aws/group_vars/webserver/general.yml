@@ -3,3 +3,4 @@
 webserver_app: yes
 openseadragon_iiiv_set_var: yes
 openseadragon_iiiv_server: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/cantaloupe/iiif/2"
+riprap_content_type: "asu_repository_item"

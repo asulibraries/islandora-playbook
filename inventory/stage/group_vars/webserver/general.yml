@@ -28,3 +28,4 @@ cantaloupe_cache_derivative: FilesystemCache
 cantaloupe_create_FilesystemCache_dir: yes
 cantaloupe_resolver_static: HttpResolver
 cantaloupe_HttpResolver_BasicLookupStrategy_url_prefix: ""
+riprap_content_type: "asu_repository_item"

@@ -7,3 +7,4 @@ openseadragon_iiiv_server: "http://{{ hostvars[groups['tomcat'][0]].ansible_host
 drupal_owner: vagrant
 drupal_group: vagrant
 php_post_max_size: "64M"
+riprap_content_type: "asu_repository_item"
