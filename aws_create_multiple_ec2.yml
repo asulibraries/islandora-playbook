@@ -372,7 +372,7 @@
           Application: islandora
       when: matomo_rds_instance.instances|length < 1
 
-    - name: check for main s3
+    - name: check for bags s3
       block:
         - aws_s3:
             mode: list
@@ -404,6 +404,69 @@
             state: present
             versioning: yes
 
+    - name: check for drupal filesystem s3
+      block:
+        - aws_s3:
+            mode: list
+            bucket: islandora-drupal
+            aws_secret_key: "{{ aws_secret_key }}"
+            aws_access_key: "{{ aws_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: islandora-drupal
+            aws_secret_key: "{{ aws_secret_key }}"
+            aws_access_key: "{{ aws_access_key }}"
+            region: us-east-1
+            state: present
+            versioning: yes
+
+    - name: check for bags s3 in disaster recovery
+      block:
+        - aws_s3:
+            mode: list
+            bucket: asulibdev-islandora-bucket-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: asulibdev-islandora-bucket-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+            region: us-west-2
+            state: present
+            versioning: yes
+
+    - name: check for fedora s3 in disaster recovery
+      block:
+        - aws_s3:
+            mode: list
+            bucket: fcrepo-filestore-dr
+            aws_secret_key: "{{ aws_secret_key }}"
+            aws_access_key: "{{ aws_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: fcrepo-filestore-dr
+            aws_secret_key: "{{ aws_secret_key }}"
+            aws_access_key: "{{ aws_access_key }}"
+            region: us-east-1
+            state: present
+            versioning: yes
+
+    - name: check for drupal filesystem s3 in disaster recovery
+      block:
+        - aws_s3:
+            mode: list
+            bucket: islandora-drupal-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: islandora-drupal-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+            region: us-west-2
+            state: present
+            versioning: yes
 
 
 
