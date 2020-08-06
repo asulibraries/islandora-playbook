@@ -157,6 +157,11 @@
               - 10.192.36.190/32 #private IP
               - 35.166.140.245/32 #services public IP
               - 98.177.147.219/32 #eli at home
+              - 10.119.23.42/32 #qualys
+              - 129.219.222.58/32 #qualys
+              - 10.119.23.64/32 #qualys
+              - 10.119.23.66/32 #qualys
+              - 10.119.23.68/32 #qualys
             group_id: "{{ elb_security_group.group_id }}"
           - proto: tcp
             from_port: 3306
