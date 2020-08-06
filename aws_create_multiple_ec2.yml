@@ -251,13 +251,13 @@
         rules:
           - proto: tcp
             ports:
-              - 80
               - 8080
-              - 443
               - 8161
               - 61613
               - 61616
               - 8983
+              - 80 # not sure if this is being used
+              # - 443 # not sure if this is being used
             cidr_ip:
               - 172.31.16.0/20 #ASU VPN 1
               - 172.31.32.0/20 #ASU VPN 2
@@ -269,13 +269,14 @@
               - 35.163.77.215/32 #webserver IP
               - 98.177.147.219/32 #eli at home
           - proto: tcp
-            from_port: 3306
-            to_port: 3306
-            cidr_ip: 10.192.36.190/32
-          - proto: tcp
-            from_port: 22
-            to_port: 22
-            cidr_ip: 98.177.147.219/32 #eli at home
+            ports: 3306
+            cidr_ip:
+              - 10.192.36.190/32
+          - proto: all
+            cidr_ip: 
+              - 98.177.147.219/32 #eli at home
+              - 35.166.140.245/32 #itself
+
       register: services_security_group
 
     - name: assign services security group
@@ -440,15 +441,15 @@
       block:
         - aws_s3:
             mode: list
-            bucket: fcrepo-filestore-dr
-            aws_secret_key: "{{ aws_secret_key }}"
-            aws_access_key: "{{ aws_access_key }}"
+            bucket: fcrepo-files-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
       rescue:
         - s3_bucket:
-            name: fcrepo-filestore-dr
-            aws_secret_key: "{{ aws_secret_key }}"
-            aws_access_key: "{{ aws_access_key }}"
-            region: us-east-1
+            name: fcrepo-files-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+            region: us-west-2
             state: present
             versioning: yes
 
