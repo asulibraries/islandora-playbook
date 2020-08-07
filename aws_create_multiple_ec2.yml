@@ -219,12 +219,18 @@
         listeners:
           - Protocol: HTTP # options are http, https, ssl, tcp
             Port: 80
-            # SslPolicy: ELBSecurityPolicy-2016-08
-            # Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
-            #   - CertificateArn: "arn:aws:acm:us-west-2:380105785187:certificate/bfd85bd1-8ca5-4ba4-9b76-04da628e4725"
             DefaultActions:
               - Type: forward # Required.
                 TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+          - Protocol: HTTPS
+            Port: 443
+            SslPolicy: ELBSecurityPolicy-2016-08
+            Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
+              - CertificateArn: "arn:aws:acm:us-west-2:380105785187:certificate/1de6a36c-d5d7-4c28-bb51-34daa878a453"
+            DefaultActions:
+              - Type: forward # Required.
+                TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+
 
     - name: check for services security group
       ec2_group_facts:
@@ -261,7 +267,7 @@
               - 61613
               - 61616
               - 8983
-              - 80 # not sure if this is being used
+              - 80
               # - 443 # not sure if this is being used
             cidr_ip:
               - 172.31.16.0/20 #ASU VPN 1
