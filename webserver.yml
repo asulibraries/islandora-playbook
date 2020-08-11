@@ -28,4 +28,13 @@
     - Islandora-Devops.riprap
     - Islandora-Devops.bagger
     - Islandora-Devops.matomo
-    - Islandora-Devops.fits
+    # - Islandora-Devops.fits
+
+  tasks:
+    - name: Download Islandora FITS
+      composer:
+        command: require
+        arguments: islandora-rdm/islandora_fits
+        working_dir: "{{ drupal_core_path }}/.."
+    - name: Enable Islansdora FITS
+      command: "{{ drush_path }} --root {{ drupal_core_path }} -y en islandora_fits"
