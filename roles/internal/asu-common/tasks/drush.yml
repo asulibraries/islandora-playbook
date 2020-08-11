@@ -81,3 +81,15 @@
   lineinfile:
     path: "/var/www/html/drupal/web/sites/default/settings.php"
     line: "$settings['s3fs.secret_key'] = '{{ aws_s3_secret_key }}';"
+
+- name: Edit Drupal's Setting file for aws s3
+  when: inventory_dir is regex("stage|prod|aws")
+  lineinfile:
+    path: "/var/www/html/drupal/web/sites/default/settings.php"
+    line: "$settings['s3fs.use_s3_for_private'] = TRUE;"
+
+- name: Edit Drupal's Setting file for aws s3
+  when: inventory_dir is regex("stage|prod|aws")
+  lineinfile:
+    path: "/var/www/html/drupal/web/sites/default/settings.php"
+    line: "$settings['s3fs.use_s3_for_public'] = TRUE;"
