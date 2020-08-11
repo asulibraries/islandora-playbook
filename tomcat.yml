@@ -23,4 +23,4 @@
     - Islandora-Devops.grok
     - Islandora-Devops.cantaloupe
     - Islandora-Devops.activemq
-    # - Islandora-Devops.fits #this has to be on the webserver right now
+    - Islandora-Devops.fits
