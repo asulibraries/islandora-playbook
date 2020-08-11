@@ -1,16 +1,16 @@
-# ---
+---
 
-# - hosts: webserver
-#   become: yes
+- hosts: tomcat
+  become: yes
 
-#   roles:
-#     - role: geerlingguy.java
-#       when: "ansible_os_family == 'Debian'"
-#       java_packages:
-#         - openjdk-8-jdk
-#     - role: geerlingguy.java
-#       when: "ansible_os_family == 'RedHat'"
-#       java_packages:
-#         - java-1.8.0-openjdk
-#     - Islandora-Devops.cantaloupe
-#     - Islandora-Devops.tomcat8
+  roles:
+    - role: geerlingguy.java
+      when: "ansible_os_family == 'Debian'"
+      java_packages:
+        - openjdk-8-jdk
+    - role: geerlingguy.java
+      when: "ansible_os_family == 'RedHat'"
+      java_packages:
+        - java-1.8.0-openjdk
+    - Islandora-Devops.cantaloupe
+    - Islandora-Devops.tomcat8
