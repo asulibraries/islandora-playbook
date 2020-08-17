@@ -23,6 +23,15 @@
           "tag:Name": "Repo-Dev-Split-webserver"
       register: webserver_instances
 
+    - name: debug
+      debug:
+        var: webserver_instances.instances[0].private_ip_address
+    
+    - name: make ip string
+      set_fact:
+        web_priv_ip: "{{ webserver_instances.instances[0].private_ip_address }}/32"
+
+
     - name: get the services server IP
       ec2_instance_facts:
         aws_secret_key: "{{ aws_secret_key }}"
@@ -33,7 +42,35 @@
           "tag:Name": "Repo-Dev-Split-services"
       register: services_instances
 
-    - name: create ec2
+    - name: create webserver ec2
+      ec2:
+        key_name: "{{ keypair }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        group: "{{ security_group }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image }}"
+        wait: true
+        region: "{{ region }}"
+        count: "{{ count }}"
+        # vpc_subnet_id: subnet-0a175a933a579e7ea
+        vpc_subnet_id: subnet-0b74ab7097f3deb11
+        assign_public_ip: no
+        instance_tags:
+          repository_purpose: islandora-split
+          Name: "Repo-Dev-Split-{{ item }}"
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 8
+            delete_on_termination: true
+      with_items:
+        - "webserver"
+        # - "services"
+      register: ec2-web
+      # when: (webserver_instances|length < 1) and (services_instances|length < 1)
+      when: webserver_instances.instances|length < 1
+
+    - name: create services ec2
       ec2:
         key_name: "{{ keypair }}"
         aws_secret_key: "{{ aws_secret_key }}"
@@ -45,6 +82,8 @@
         region: "{{ region }}"
         count: "{{ count }}"
         vpc_subnet_id: subnet-0a175a933a579e7ea
+        # vpc_subnet_id: subnet-0b74ab7097f3deb11
+        assign_public_ip: no
         instance_tags:
           repository_purpose: islandora-split
           Name: "Repo-Dev-Split-{{ item }}"
@@ -53,30 +92,31 @@
             volume_size: 8
             delete_on_termination: true
       with_items:
-        - "webserver"
+        # - "webserver"
         - "services"
-      register: ec2
-      when: (webserver_instances|length < 1) and (services_instances|length < 1)
+      register: ec2-services
+      # when: (webserver_instances|length < 1) and (services_instances|length < 1)
+      when: services_instances.instances|length < 1
 
-    - name: set the webserver static ip
-      ec2_eip:
-        device_id: "{{ item.instance_id }}"
-        ip: 35.163.77.215
-        region: "{{ region }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        aws_access_key: "{{ aws_access_key }}"
-      with_items: "{{ webserver_instances.instances }}"
-      retries: 5
+    # - name: set the webserver static ip
+    #   ec2_eip:
+    #     device_id: "{{ item.instance_id }}"
+    #     ip: 35.163.77.215
+    #     region: "{{ region }}"
+    #     aws_secret_key: "{{ aws_secret_key }}"
+    #     aws_access_key: "{{ aws_access_key }}"
+    #   with_items: "{{ webserver_instances.instances }}"
+    #   retries: 5
 
-    - name: set the services static ip
-      ec2_eip:
-        device_id: "{{ item.instance_id }}"
-        ip: 35.166.140.245
-        region: "{{ region }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        aws_access_key: "{{ aws_access_key }}"
-      with_items: "{{ services_instances.instances }}"
-      retries: 5
+    # - name: set the services static ip
+    #   ec2_eip:
+    #     device_id: "{{ item.instance_id }}"
+    #     ip: 35.166.140.245
+    #     region: "{{ region }}"
+    #     aws_secret_key: "{{ aws_secret_key }}"
+    #     aws_access_key: "{{ aws_access_key }}"
+    #   with_items: "{{ services_instances.instances }}"
+    #   retries: 5
 
     - name: check for elb security group
       ec2_group_facts:
@@ -179,18 +219,18 @@
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         instance_ids:
-          - "{{ item.instance_id }}"
+          - "{{ webserver_instances.instances[0].instance_id }}"
         region: "{{ region }}"
         groups:
           - "{{ webserver_security_group.group_name }}"
           - "{{ security_group }}"
-      with_items: "{{ webserver_instances.instances }}"
+      # with_items: "{{ webserver_instances.instances[0] }}"
 
     - name: create ELB target group
       elb_target_group:
         name: islandora-webserver-target
-        protocol: http
-        port: 80
+        protocol: https
+        port: 443
         state: present
         region: "{{ region }}"
         aws_secret_key: "{{ aws_secret_key }}"
@@ -199,37 +239,47 @@
         health_check_path: /
         successful_response_codes: "200"
         targets:
-          - Id: "{{ item.instance_id }}"
-            Port: 80
-      with_items: "{{ webserver_instances.instances }}"
+          - Id: "{{ webserver_instances.instances[0].instance_id }}"
+            Port: 443
+      # with_items: "{{ webserver_instances.instances[0] }}"
       register: elb_target_group
 
-    - name: create ELB
-      elb_application_lb:
-        name: "islandora-webserver-elb"
-        state: present
-        aws_secret_key: "{{ aws_secret_key }}"
-        aws_access_key: "{{ aws_access_key }}"
-        region: "{{ region }}"
-        subnets:
-          - subnet-02b1343bf83ae6322
-          - subnet-0a175a933a579e7ea
-        security_groups:
-          - "{{ elb_security_group.group_id }}"
-        listeners:
-          - Protocol: HTTP # options are http, https, ssl, tcp
-            Port: 80
-            DefaultActions:
-              - Type: forward # Required.
-                TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
-          - Protocol: HTTPS
-            Port: 443
-            SslPolicy: ELBSecurityPolicy-2016-08
-            Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
-              - CertificateArn: "arn:aws:acm:us-west-2:380105785187:certificate/1de6a36c-d5d7-4c28-bb51-34daa878a453"
-            DefaultActions:
-              - Type: forward # Required.
-                TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+    # - name: create ELB
+    #   elb_application_lb:
+    #     name: "islandora-webserver-elb"
+    #     state: present
+    #     aws_secret_key: "{{ aws_secret_key }}"
+    #     aws_access_key: "{{ aws_access_key }}"
+    #     region: "{{ region }}"
+    #     subnets:
+    #       - subnet-02b1343bf83ae6322
+    #       - subnet-0a175a933a579e7ea
+    #     security_groups:
+    #       - "{{ elb_security_group.group_id }}"
+    #     listeners:
+    #       # this did not work through ansible - had to go in to UI and create a listener on the ELB 
+    #       # to forward port 80 to 443 HTTPS
+    #       # - Protocol: HTTP # options are http, https, ssl, tcp
+    #       #   Port: 80
+    #       #   DefaultActions:
+    #       #     - Type: redirect # Required.
+    #       #       TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+    #       #       RedirectConfig:
+    #       #         # https://#{host}:443/#{path}?#{query}
+    #       #         Host: "#{host}"
+    #       #         Path: "#{path}"
+    #       #         Port: 443
+    #       #         Query: "#{query}"
+    #       #         Protocol: "https"
+    #       #         StatusCode: "HTTP_301"
+    #       - Protocol: HTTPS
+    #         Port: 443
+    #         SslPolicy: ELBSecurityPolicy-2016-08
+    #         Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
+    #           - CertificateArn: "arn:aws:acm:us-west-2:380105785187:certificate/bfd85bd1-8ca5-4ba4-9b76-04da628e4725"
+    #         DefaultActions:
+    #           - Type: forward # Required.
+    #             TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
 
 
     - name: check for services security group
@@ -240,7 +290,7 @@
         filters:
           "group-name": islandora-services
       register: services_security_group
-
+    
     # TODO LOCK THIS FOR SSH
     # SSH port 22 should be set to
     # 10.192.0.0/16 ASULIB
@@ -277,7 +327,7 @@
               - 209.147.128.0/18 #ASU PUBLIC 3
               - 10.192.36.25/32 #private IP services
               - 10.192.36.190/32 #private IP
-              - 35.163.77.215/32 #webserver IP
+              # - 35.163.77.215/32 #webserver IP
               - 98.177.147.219/32 #eli at home
           - proto: tcp
             ports: 3306
@@ -287,7 +337,7 @@
             cidr_ip: 
               - 98.177.147.219/32 #eli at home
               - 35.166.140.245/32 #itself
-
+              - "{{ web_priv_ip }}" #webserver
       register: services_security_group
 
     - name: assign services security group
