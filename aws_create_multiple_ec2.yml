@@ -155,7 +155,7 @@
               #- 149.169.0.0/16 #ASU PUBLIC 1
               #- 129.219.0.0/16 #ASU PUBLIC 2
               #- 209.147.128.0/18 #ASU PUBLIC 3
-              #- 10.192.36.25/32 #private IP
+              #- "{{web_priv_ip}}" #private IP
               #- 10.192.36.190/32 #private IP
               #- 35.166.140.245/32 #services public IP
       register: elb_security_group
@@ -193,7 +193,7 @@
               - 149.169.0.0/16 #ASU PUBLIC 1
               - 129.219.0.0/16 #ASU PUBLIC 2
               - 209.147.128.0/18 #ASU PUBLIC 3
-              - 10.192.36.25/32 #private IP
+              - "{{web_priv_ip}}" #private IP
               - 10.192.36.190/32 #private IP
               - 35.166.140.245/32 #services public IP
               - 98.177.147.219/32 #eli at home
@@ -206,7 +206,7 @@
           - proto: tcp
             from_port: 3306
             to_port: 3306
-            cidr_ip: 10.192.36.25/32
+            cidr_ip: "{{web_priv_ip}}"
           - proto: tcp
             from_port: 22
             to_port: 22
@@ -325,8 +325,11 @@
               - 149.169.0.0/16 #ASU PUBLIC 1
               - 129.219.0.0/16 #ASU PUBLIC 2
               - 209.147.128.0/18 #ASU PUBLIC 3
-              - 10.192.36.25/32 #private IP services
-              - 10.192.36.190/32 #private IP
+              # - 10.192.36.190/32 #private IP
+              # - "{{web_priv_ip}}" #private IP services
+              # - 52.25.225.253/32 #ELB
+              # - 35.167.139.18/32 #ELB
+              - 34.208.70.8/32 # new public IP of webserver
               # - 35.163.77.215/32 #webserver IP
               - 98.177.147.219/32 #eli at home
           - proto: tcp
@@ -338,6 +341,9 @@
               - 98.177.147.219/32 #eli at home
               - 35.166.140.245/32 #itself
               - "{{ web_priv_ip }}" #webserver
+              - 10.192.36.190/32 #private IP
+              - 52.25.225.253/32 #ELB
+              - 35.167.139.18/32 #ELB
       register: services_security_group
 
     - name: assign services security group
@@ -358,23 +364,24 @@
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
-        id: islandora-drupal
+        id: islandora-drupal2
       register: drupal_rds_instance
 
     - name: create Drupal RDS
       rds:
         command: create
-        instance_name: islandora-drupal
+        instance_name: islandora-drupal2
         db_engine: MySQL
         size: 10
         instance_type: db.t2.micro
         username: drupal8
-        db_name: drupal8
+        db_name: drupal8v2
         password: "{{ drupal_db_password }}"
         vpc_security_groups: "{{ webserver_security_group.group_id }}"
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
+        engine_version: 5.7.30
         subnet: libdev-db-private-ips
         tags:
           Application: islandora
@@ -433,6 +440,33 @@
         tags:
           Application: islandora
       when: matomo_rds_instance.instances|length < 1
+
+    - name: check for gemini RDS
+      rds_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        id: islandora-gemini
+      register: gemini_rds_instance
+
+    - name: create gemini RDS
+      rds:
+        command: create
+        instance_name: islandora-gemini
+        db_engine: MySQL
+        size: 10
+        instance_type: db.t2.micro
+        username: crayfish
+        db_name: gemini
+        password: "{{ crayfish_db_password }}"
+        vpc_security_groups: "{{ webserver_security_group.group_id }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        subnet: libdev-db-private-ips
+        tags:
+          Application: islandora
+      when: gemini_rds_instance.instances|length < 1
 
     - name: check for bags s3
       block:
