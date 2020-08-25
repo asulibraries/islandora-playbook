@@ -1,0 +1,82 @@
+---
+
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_os_family}}.yml"
+  tags:
+    - crayfish
+    - crayfish-install
+    - crayfish-gemini
+    - crayfish-houdini
+
+- name: Define crayfish_user
+  set_fact:
+    crayfish_user: "{{ __crayfish_user }}"
+  when: crayfish_user is not defined
+  tags:
+    - crayfish
+    - crayfish-install
+    - crayfish-gemini
+    - crayfish-houdini
+
+- name: Define httpd_conf_directory
+  set_fact:
+    httpd_conf_directory: "{{ __httpd_conf_directory }}"
+  when: httpd_conf_directory is not defined
+  tags:
+    - crayfish
+    - crayfish-install
+    - crayfish-gemini
+    - crayfish-houdini
+
+- name: Define OS-specific crayfish_packages to install
+  set_fact:
+    crayfish_packages: "{{ __crayfish_packages }}"
+  when: crayfish_packages is not defined
+  tags:
+    - crayfish
+    - crayfish-install
+    - crayfish-gemini
+    - crayfish-houdini
+
+- name: Define crayfish_db if not defined
+  set_fact:
+    crayfish_db: "{{ __crayfish_db }}"
+  when: crayfish_db is not defined
+  tags:
+    - crayfish
+    - crayfish-db
+    - crayfish-install
+    - crayfish-gemini
+
+- include: install.yml
+  tags:
+    - crayfish
+    - crayfish-install
+
+- include: db-mysql.yml
+  when: crayfish_db == 'mysql'
+  tags:
+    - crayfish
+    - crayfish-db
+    - crayfish-install
+    - crayfish-gemini
+
+- include: db-pgsql.yml
+  when: crayfish_db == 'pgsql'
+  become_user: "{{ crayfish_pgsql_user }}"
+  become: yes
+  tags:
+    - crayfish
+    - crayfish-db
+    - crayfish-install
+    - crayfish-gemini
+
+- include: gemini.yml
+  tags:
+    - crayfish
+    - crayfish-gemini
+
+- include: houdini.yml
+  tags:
+    - crayfish
+    - crayfish-houdini
