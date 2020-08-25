@@ -6,4 +6,4 @@
     drupal_core_path: "/var/www/html/drupal/web"
 - import_tasks: permissions.yml
 - import_tasks: assets.yml
-
+- import_tasks: db-backups.yml
