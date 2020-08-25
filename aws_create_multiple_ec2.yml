@@ -459,7 +459,7 @@
         username: crayfish
         db_name: gemini
         password: "{{ crayfish_db_password }}"
-        vpc_security_groups: "{{ webserver_security_group.group_id }}"
+        vpc_security_groups: "{{ services_security_group.group_id }}"
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
