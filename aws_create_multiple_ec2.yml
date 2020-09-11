@@ -1,4 +1,4 @@
-- hosts: localhost #boto takes care of this?
+- hosts: localhost
   connection: local
   gather_facts: False
   vars:
@@ -143,7 +143,7 @@
           - proto: tcp
             ports:
               - 80
-              - 8000
+              - 8000 # do we need this? probably not in stage/prod
               - 443
             cidr_ip: 0.0.0.0/0
             cidr_ipv6: ::/0
@@ -207,6 +207,7 @@
             from_port: 3306
             to_port: 3306
             cidr_ip: "{{web_priv_ip}}"
+            # can probably remove this one since we're running on the private subnet now
           - proto: tcp
             from_port: 22
             to_port: 22
@@ -344,6 +345,10 @@
               - 10.192.36.190/32 #private IP
               - 52.25.225.253/32 #ELB
               - 35.167.139.18/32 #ELB
+              # we think it might just be the 10.192.*
+              # with restrict it to the webserver security group
+              # and possibly the public IPs of the ELB
+              # plus whatever small group of humans (devs) need to access
       register: services_security_group
 
     - name: assign services security group
@@ -480,7 +485,7 @@
             name: asulibdev-islandora-bucket
             aws_secret_key: "{{ aws_secret_key }}"
             aws_access_key: "{{ aws_access_key }}"
-            region: us-east-1
+            region: us-west-2
             state: present
             versioning: yes
   
@@ -496,7 +501,7 @@
             name: fcrepo-filestore
             aws_secret_key: "{{ aws_secret_key }}"
             aws_access_key: "{{ aws_access_key }}"
-            region: us-east-1
+            region: us-west-2
             state: present
             versioning: yes
 
@@ -512,7 +517,7 @@
             name: islandora-drupal
             aws_secret_key: "{{ aws_secret_key }}"
             aws_access_key: "{{ aws_access_key }}"
-            region: us-east-1
+            region: us-west-2
             state: present
             versioning: yes
 
@@ -528,7 +533,7 @@
             name: asulibdev-islandora-bucket-dr
             aws_secret_key: "{{ aws_dr_secret_key }}"
             aws_access_key: "{{ aws_dr_access_key }}"
-            region: us-west-2
+            region: us-east-1
             state: present
             versioning: yes
 
@@ -544,7 +549,7 @@
             name: fcrepo-files-dr
             aws_secret_key: "{{ aws_dr_secret_key }}"
             aws_access_key: "{{ aws_dr_access_key }}"
-            region: us-west-2
+            region: us-east-1
             state: present
             versioning: yes
 
@@ -560,10 +565,13 @@
             name: islandora-drupal-dr
             aws_secret_key: "{{ aws_dr_secret_key }}"
             aws_access_key: "{{ aws_dr_access_key }}"
-            region: us-west-2
+            region: us-east-1
             state: present
             versioning: yes
 
+# note that lifecycle rules to push s3 -> dr s3 were done manually in the aws console
+# add rds parameter group to up the max_allowed_packets
+# manually set up simple email service
 
 
 
