@@ -8,3 +8,5 @@ php_packages_extra:
   - php-mbstring
   - php-zip
   - php-intl
+  - php-ldap
+  - php7.2-ldap
