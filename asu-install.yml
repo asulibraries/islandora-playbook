@@ -9,3 +9,8 @@
   roles:
     - geerlingguy.drush
     - asu-common
+
+- hosts: services
+  become: yes
+  roles:
+    - asu-services

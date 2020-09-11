@@ -16,4 +16,5 @@
  alpaca_gemini_base_url: http://35.166.140.245/gemini/
  alpaca_houdini_base_url: "http://35.166.140.245/houdini"
  alpaca_homarus_base_url: "http://35.166.140.245/homarus"
+ alpaca_fits_base_url: "http://35.166.140.245/crayfits"
  tomcat8_home: /var/lib/tomcat8
