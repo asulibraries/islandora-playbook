@@ -93,3 +93,7 @@
   lineinfile:
     path: "/var/www/html/drupal/web/sites/default/settings.php"
     line: "$settings['s3fs.use_s3_for_public'] = TRUE;"
+
+# TODO 
+# add the password for LDAP from the yml
+# $settings['ldap_servers.server.asu_ldap']['bindpw'] = '';
