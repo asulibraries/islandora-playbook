@@ -20,7 +20,6 @@
     - geerlingguy.composer
     - symlink
     - geerlingguy.drush
-    - geerlingguy.drupal-console
     - geerlingguy.drupal
     - perms-fix
     - Islandora-Devops.drupal-openseadragon
@@ -31,6 +30,14 @@
     # - Islandora-Devops.fits
 
   tasks:
+    - name: ensure ssl directory
+      file: path=/etc/ssl/private state=directory
+
+    - name: copy ssl cer and key
+      copy: src={{ item }} dest=/etc/ssl/private owner=root group=root mode=400
+      with_items:
+        - __lib_asu_edu.key
+        - __lib_asu_edu.cer
     - name: Download Islandora FITS
       composer:
         command: require
