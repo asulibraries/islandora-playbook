@@ -24,9 +24,6 @@ drupal_composer_dependencies:
   - "islandora/carapace:dev-8.x-3.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
   - "drupal/orcid"
-  # - "drupal/message"
-  # - "drupal/message_digest"
-  # - "drupal/message_subscribe_email"
   - "drupal/bibcite"
   - "drupal/webform"
   - "drupal/workbench"
@@ -37,9 +34,6 @@ drupal_composer_dependencies:
   - "drupal/weight"
   - "drupal/superfish"
   - "drupal/at_tools"
-  # https://github.com/roblib/lc_subject_field
-  # https://github.com/UNLV-Libraries/archivesspace-drupal
-  # https://github.com/mjordan/islandora_workbench
   - "islandora-rdm/islandora_fits:dev-master"
   - "drupal/simple_sitemap"
   - "drupal/auto_entitylabel"
@@ -74,7 +68,6 @@ drupal_enable_modules:
   - restui
   - devel
   - search_api_solr
-  - search_api_solr_defaults
   - facets
   - content_browser
   - matomo
