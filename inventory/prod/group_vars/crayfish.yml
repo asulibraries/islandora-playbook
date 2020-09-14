@@ -1,0 +1,7 @@
+---
+crayfish_version_tag: dev
+crayfish_db: mysql
+
+crayfish_fedora_base_url: "http://35.166.140.245:8080/fcrepo/rest" #TODO change to prod
+crayfish_drupal_base_url: "http://repository.lib.asu.edu" 
+crayfish_gemini_base_url: "http://10.192.36.190/gemini" #TODO change to prod

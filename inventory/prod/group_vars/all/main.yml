@@ -1,0 +1,72 @@
+---
+
+# Change selinux status to permissive
+disable_selinux: yes
+
+islandora_extra_ubuntu_packages:
+  - wget
+  - curl
+  - htop
+  - tree
+  - zsh
+  - fish
+  - unzip
+  - build-essential
+  - vim
+  - python3-mysqldb
+  - awscli
+
+islandora_extra_centos_packages:
+  - wget
+  - curl
+  - tree
+  - zsh
+  - unzip
+  - vim
+  - make
+  - automake
+  - gcc
+  - gcc-c++
+  - kernel-devel
+
+postgresql_user: postgres
+drupal_db_user: drupal8
+drupal_db_name: drupal8v2
+
+mysql_users:
+  - name: "{{ drupal_db_user }}"
+    host: "%"
+    password: "{{ drupal_db_password }}"
+    priv: "{{ drupal_db_name }}.*:ALL"
+
+# Used by both the webserver and crayfish role for CentOS.
+php_enablerepo: "remi-php72"
+php_packages_state: "latest"
+httpd_conf_directory: "/etc/apache2"
+httpd_conf_directory_enabled: "{{httpd_conf_directory}}/conf-enabled"
+drush_path: "/usr/local/bin/drush"
+crayfish_drupal_base_url: "http://{{ hostvars[groups['webserver'][0]].ansible_host }}:{{ apache_listen_port }}"
+crayfish_db_host: islandora-gemini.cvznsvixsvec.us-west-2.rds.amazonaws.com #TODO change for prod
+crayfish_db_user: crayfish
+crayfish_db_name: gemini
+crayfish_db_root_user: "{{crayfish_db_user}}"
+crayfish_db_root_password: "{{crayfish_db_password}}"
+drupal_composer_project_package: "islandora/drupal-project:8.8.1"
+openseadragon_composer_item: "islandora/openseadragon:dev-8.x-1.x"
+
+
+webserver_app: yes
+openseadragon_iiiv_set_var: yes
+openseadragon_iiiv_server: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/cantaloupe/iiif/2"
+
+drupal_owner: ubuntu
+drupal_group: ubuntu
+php_post_max_size: "64M"
+
+  
+
+matomo_db_host: islandora-matomo.cvznsvixsvec.us-west-2.rds.amazonaws.com #TODO change for prod
+matomo_db_user: matomo
+matomo_db_name: matomo
+matomo_db_root_user: matomo
+matomo_db_root_password: "{{ matomo_db_password }}"
