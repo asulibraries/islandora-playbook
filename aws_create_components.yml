@@ -576,7 +576,7 @@
         region: "{{ region }}"
         engine_version: 5.7.30
         subnet: "{{ rds_subnet }}"
-        parameter_group: "{{prefix}}mysql-5.7-params"
+        parameter_group: "{{prefix}}mysql-5-7-params"
         tags:
           Application: islandora
       when: drupal_rds_instance.instances|length < 1
@@ -605,7 +605,7 @@
         region: "{{ region }}"
         engine_version: 5.7.30
         subnet: "{{ rds_subnet }}"
-        parameter_group: "{{prefix}}mysql-5.7-params"
+        parameter_group: "{{prefix}}mysql-5-7-params"
         tags:
           Application: islandora
       when: drupal_landing_rds_instance.instances|length < 1
