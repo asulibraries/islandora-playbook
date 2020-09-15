@@ -819,13 +819,6 @@
             state: present
             versioning: yes
 
-    - name: create an iam user for s3 access
-      iam:
-        iam_type: user
-        name: "{{ prefix }}s3-user"
-        state: present
-
-
 
 # note that replication rules to push s3 -> dr s3 were done manually in the aws console
           # entire bucket replicate to DR account with storage class Glacier
