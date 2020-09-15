@@ -541,7 +541,7 @@
     - name: create rds parameter group
       rds_param_group:
         state: present
-        name: "{{prefix}}mysql-5.7-params"
+        name: "{{prefix}}mysql-5-7-params"
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
