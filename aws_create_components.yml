@@ -77,6 +77,16 @@
       register: webserver_instances # ec2-web
       when: webserver_instances.instances|length < 1
 
+    - name: get the webserver IP
+      ec2_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "tag:repository_purpose": "{{ prefix }}split"
+          "tag:Name": "{{ prefix }}webserver"
+      register: webserver_instances
+
     - name: debug
       debug:
         var: webserver_instances.instances[0].private_ip_address
@@ -110,6 +120,16 @@
       register: ec2-services
       when: services_instances.instances|length < 1
 
+    - name: get the services server IP
+      ec2_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "tag:repository_purpose": "{{ prefix }}split"
+          "tag:Name": "{{ prefix }}services"
+      register: services_instances
+
     - name: make services ip string
       set_fact:
         services_priv_ip: "{{ services_instances.instances[0].private_ip_address }}/32"  
@@ -138,6 +158,16 @@
         - "landing"
       register: ec2-landing
       when: landing_instances.instances|length < 1
+
+    - name: get the landing IP
+      ec2_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "tag:repository_purpose": "{{ prefix }}split"
+          "tag:Name": "{{ prefix }}landing"
+      register: landing_instances
 
     - name: make landing ip string
       set_fact:
