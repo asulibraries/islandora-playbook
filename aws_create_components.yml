@@ -507,10 +507,14 @@
           - proto: all
             group_id: "{{ webserver_security_group.group_id }}"
           - proto: all
-            group_id: "{{ services_security_group.group_id }}" # allow from itself
-          - proto: all
             cidr_ip:
               - 10.192.0.0/16
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip:
+              - "{{ asu_vpn_ip_1 }}"
+              - "{{ asu_vpn_ip_2 }}"
       register: services_security_group
 
     - name: assign services security group
