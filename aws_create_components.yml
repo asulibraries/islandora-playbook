@@ -15,7 +15,7 @@
     public_subnet_b: subnet-021ff3f60cc4e56f6
     vpc_id: vpc-09949d0d16ed55e42
     asu_vpn_ip_1: 172.31.32.0/20
-    asu_vpn_ip_2: 172.31.16.0/32
+    asu_vpn_ip_2: 172.31.16.0/20
     star_lib_cert: "arn:aws:acm:us-west-2:141031099449:certificate/e44158ad-91d3-4ad6-8f32-71144459dde9"
     rds_subnet: "lib-prod-rds-private"
   vars_files:
