@@ -352,6 +352,14 @@
             Port: 443
       register: elb_web_target_group
 
+    - name: get elb webserver
+      elb_application_lb_facts:
+        names: "{{ prefix }}webserver-elb"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+      register: elb_webserver
+
     - name: create webserver ELB - this is keep.lib.asu.edu
       elb_application_lb:
         name: "{{ prefix }}webserver-elb"
@@ -387,7 +395,8 @@
               - CertificateArn: "{{ star_lib_cert }}"
             DefaultActions:
               - Type: forward
-                TargetGroupName: "{{ elb_web_target_group.results[0].target_group_name }}"
+                TargetGroupName: "{{ elb_web_target_group.target_group_name }}"
+      when: elb_webserver.load_balancers|length < 1
 
     - name: create landing ELB target group
       elb_target_group:
@@ -406,6 +415,13 @@
             Port: 443
       register: elb_landing_target_group
 
+    - name: get landing ELB
+      elb_application_lb_facts:
+        names: "{{ prefix }}landing-elb"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+      register: elb_landing
 
     - name: create landing ELB - this is repository.lib.asu.edu
       elb_application_lb:
@@ -442,7 +458,8 @@
               - CertificateArn: "{{ star_lib_cert }}"
             DefaultActions:
               - Type: forward
-                TargetGroupName: "{{ elb_landing_target_group.results[0].target_group_name }}"
+                TargetGroupName: "{{ elb_landing_target_group.target_group_name }}"
+      when: elb_landing.load_balancers|length < 1
 
     - name: check for services security group
       ec2_group_facts:
@@ -510,8 +527,12 @@
             cidr_ip:
               - 10.192.0.0/16
           - proto: tcp
-            from_port: 22
-            to_port: 22
+            ports:
+              - 22
+              - 80
+              - 8080
+              - 443
+              - 8983
             cidr_ip:
               - "{{ asu_vpn_ip_1 }}"
               - "{{ asu_vpn_ip_2 }}"
