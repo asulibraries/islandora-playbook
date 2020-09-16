@@ -1,7 +1,7 @@
 mysqldump -u crayfish -p{{ crayfish_db_password }} -h islandora-gemini.cvznsvixsvec.us-west-2.rds.amazonaws.com --databases gemini > gemini_db_backup_$(date "+%Y-%m-%d").sql
 
-aws s3 mv gemini_db_backup_$(date "+%Y-%m-%d").sql s3://asulibdev-islandora-bucket/backups/
+aws s3 mv gemini_db_backup_$(date "+%Y-%m-%d").sql s3://{{ backup_bucket }}/backups/
 
 mysqldump -u fcrepo -p{{ fcrepo_db_password }} -h islandora-fedora.cvznsvixsvec.us-west-2.rds.amazonaws.com --databases fcrepo > fedora_db_backup_$(date "+%Y-%m-%d").sql
 
-aws s3 mv fedora_db_backup_$(date "+%Y-%m-%d").sql s3://asulibdev-islandora-bucket/backups/
+aws s3 mv fedora_db_backup_$(date "+%Y-%m-%d").sql s3://{{ backup_bucket }}/backups/

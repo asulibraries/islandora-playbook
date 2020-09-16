@@ -1,7 +1,7 @@
 mysqldump -u matomo -p{{ matomo_db_password }} -h islandora-matomo.cvznsvixsvec.us-west-2.rds.amazonaws.com --databases matomo > matomo_db_backup_$(date "+%Y-%m-%d").sql
 
-aws s3 mv matomo_db_backup_$(date "+%Y-%m-%d").sql s3://asulibdev-islandora-bucket/backups/
+aws s3 mv matomo_db_backup_$(date "+%Y-%m-%d").sql s3://{{ backup_bucket }}/backups/
 
 mysqldump -u drupal8 -p{{ drupal_db_password }} -h islandora-drupal2.cvznsvixsvec.us-west-2.rds.amazonaws.com --databases drupal8v2 > drupal_db_backup_$(date "+%Y-%m-%d").sql
 
-aws s3 mv drupal_db_backup_$(date "+%Y-%m-%d").sql s3://asulibdev-islandora-bucket/backups/
+aws s3 mv drupal_db_backup_$(date "+%Y-%m-%d").sql s3://{{ backup_bucket }}/backups/

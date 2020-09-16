@@ -71,3 +71,4 @@ matomo_db_root_user: matomo
 matomo_db_root_password: "{{ matomo_db_password }}"
 
 fcrepo_aws_bucket: islandora-fcrepo-bucket
+backup_bucket: islandora-preservation-bucket
