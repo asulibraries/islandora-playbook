@@ -44,12 +44,6 @@ php_packages_state: "latest"
 httpd_conf_directory: "/etc/apache2"
 httpd_conf_directory_enabled: "{{httpd_conf_directory}}/conf-enabled"
 drush_path: "/usr/local/bin/drush"
-crayfish_drupal_base_url: "http://{{ hostvars[groups['webserver'][0]].ansible_host }}:{{ apache_listen_port }}"
-crayfish_db_host: islandora-gemini.cnsoayetwjju.us-west-2.rds.amazonaws.com
-crayfish_db_user: crayfish
-crayfish_db_name: gemini
-crayfish_db_root_user: "{{crayfish_db_user}}"
-crayfish_db_root_password: "{{crayfish_db_password}}"
 drupal_composer_project_package: "islandora/drupal-project:8.8.1"
 openseadragon_composer_item: "islandora/openseadragon:dev-8.x-1.x"
 
@@ -62,13 +56,4 @@ drupal_owner: ubuntu
 drupal_group: ubuntu
 php_post_max_size: "64M"
 
-  
-
-matomo_db_host: islandora-matomo.cnsoayetwjju.us-west-2.rds.amazonaws.com
-matomo_db_user: matomo
-matomo_db_name: matomo
-matomo_db_root_user: matomo
-matomo_db_root_password: "{{ matomo_db_password }}"
-
-fcrepo_aws_bucket: islandora-fcrepo-bucket
 backup_bucket: islandora-preservation-bucket
