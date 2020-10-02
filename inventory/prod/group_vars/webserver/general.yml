@@ -1,0 +1,30 @@
+---
+
+webserver_app: yes
+openseadragon_iiiv_set_var: yes
+openseadragon_iiiv_server: "http://{{ hostvars[groups['tomcat'][0]].ansible_host }}:8080/cantaloupe/iiif/2"
+
+drupal_owner: ubuntu
+drupal_group: ubuntu
+php_post_max_size: "64M"
+drupal_composer_project_package: "islandora/drupal-project:8.8.1"
+
+
+cantaloupe_deploy_war: yes
+cantaloupe_deploy_war_path: "{{ tomcat8_home }}/webapps"
+cantaloupe_user: tomcat8
+cantaloupe_group: tomcat8
+cantaloupe_admin_enabled: "true"
+cantaloupe_OpenJpegProcessor_path_to_binaries: /usr/local/bin
+cantaloupe_log_application_ConsoleAppender_enabled: "false"
+cantaloupe_log_application_FileAppender_enabled: "true"
+cantaloupe_log_application_FileAppender_pathname: "{{ cantaloupe_log_path }}/application.log"
+cantaloupe_log_access_FileAppender_enabled: "true"
+cantaloupe_log_access_FileAppender_pathname: "{{ cantaloupe_log_path }}/access.log"
+cantaloupe_processor_jp2: OpenJpegProcessor
+cantaloupe_cache_source: FilesystemCache
+cantaloupe_cache_derivative: FilesystemCache
+cantaloupe_create_FilesystemCache_dir: yes
+cantaloupe_resolver_static: HttpResolver
+    
+    

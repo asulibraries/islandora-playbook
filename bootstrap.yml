@@ -6,6 +6,16 @@
   gather_facts: false
 
   tasks:
+    - name: include prod vars
+      include_vars:
+        dir: inventory/prod/group_vars
+      when: env|default('') is match("prod")
+
+    - name: include landing vars
+      include_vars:
+        dir: inventory/landing/group_vars
+      when: env|default('') is match("landing")
+
     # python isn't installed by default on ubuntu so we need
     # to do that with the raw command before
     - name: install python

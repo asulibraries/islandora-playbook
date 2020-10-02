@@ -1,0 +1,35 @@
+- name: Copy templated fcrepo config files
+  template:
+    src: "{{ item }}"
+    dest: "{{ fcrepo_home_dir }}/configs/{{ item }}"
+    owner: "{{ fcrepo_user }}"
+    group: "{{ fcrepo_user }}"
+  with_items:
+    - claw.cnd
+    - fcrepo-config.xml
+  notify: restart tomcat8
+
+- name: Copy templated repository.json
+  template:
+    src: "{{ fcrepo_persistence }}-repository.json"
+    dest: "{{ fcrepo_home_dir }}/configs/repository.json"
+    owner: "{{ fcrepo_user }}"
+    group: "{{ fcrepo_user }}"
+  notify: restart tomcat8
+
+- name: Copy fedora activemq configuration
+  template:
+    src: "{{ fcrepo_activemq_template }}"
+    dest: "{{ fcrepo_config_dir }}/activemq.xml"
+    owner: "{{ fcrepo_user }}"
+    group: "{{ fcrepo_user }}"
+  notify: restart tomcat8
+
+# ADDED by dbernstein
+- name: Template out allowed external content paths
+  template:
+    src: allowed-external-content.txt.j2
+    dest: "{{ fcrepo_allowed_external_content_file }}"
+    owner: "{{ fcrepo_user }}"
+    group: "{{ fcrepo_user }}"
+  notify: restart tomcat8

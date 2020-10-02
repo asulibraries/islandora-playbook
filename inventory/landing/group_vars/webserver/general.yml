@@ -1,0 +1,11 @@
+---
+
+webserver_app: yes
+
+drupal_owner: ubuntu
+drupal_group: ubuntu
+php_post_max_size: "64M"
+drupal_composer_project_package: "islandora/drupal-project:8.8.1"
+
+    
+    

@@ -101,4 +101,4 @@
     repo: https://github.com/asulibraries/persistent_identifiers.git
     clone: yes
     update: yes
-    version: master
+    version: override_qualifier

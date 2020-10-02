@@ -1,0 +1,20 @@
+weby ansible_host=10.192.17.252 ansible_user=ubuntu ansible_ssh_port=22 ansible_ssh_private_key_file='~/.ssh/id_rsa_asu'
+services ansible_host=10.192.17.250 ansible_user=ubuntu ansible_ssh_port=22 ansible_ssh_private_key_file='~/.ssh/id_rsa_asu'
+
+[karaf]
+services
+
+[database]
+weby
+
+[webserver]
+weby
+
+[tomcat]
+services
+
+[solr]
+services
+
+[crayfish]
+services

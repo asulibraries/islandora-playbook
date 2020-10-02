@@ -1,0 +1,7 @@
+mysqldump -u crayfish -p{{ crayfish_db_password }} -h {{ crayfish_db_host }} --databases gemini > gemini_db_backup_$(date "+%Y-%m-%d").sql
+
+aws s3 mv gemini_db_backup_$(date "+%Y-%m-%d").sql s3://{{ backup_bucket }}/backups/
+
+mysqldump -u fcrepo -p{{ fcrepo_db_password }} -h {{ fcrepo_db_host }} --databases fcrepo > fedora_db_backup_$(date "+%Y-%m-%d").sql
+
+aws s3 mv fedora_db_backup_$(date "+%Y-%m-%d").sql s3://{{ backup_bucket }}/backups/

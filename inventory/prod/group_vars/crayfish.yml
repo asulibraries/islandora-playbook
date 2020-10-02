@@ -1,0 +1,7 @@
+---
+crayfish_version_tag: dev
+crayfish_db: mysql
+
+crayfish_fedora_base_url: "http://10.192.17.250:8080/fcrepo/rest"
+crayfish_drupal_base_url: "http://keep.lib.asu.edu" 
+crayfish_gemini_base_url: "http://10.192.17.250/gemini"

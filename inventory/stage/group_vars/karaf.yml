@@ -7,7 +7,7 @@
  alpaca_karaf_repos:
   - mvn:org.apache.camel.karaf/apache-camel/2.20.4/xml/features
   - mvn:org.apache.activemq/activemq-karaf/5.15.0/xml/features
-  - mvn:ca.islandora.alpaca/islandora-karaf/1.0.2/xml/features
+  - mvn:ca.islandora.alpaca/islandora-karaf/LATEST/xml/features
  apache_listen_port: 80
 
  triplestore_namespace: islandora
@@ -16,4 +16,5 @@
  alpaca_gemini_base_url: http://35.166.140.245/gemini/
  alpaca_houdini_base_url: "http://35.166.140.245/houdini"
  alpaca_homarus_base_url: "http://35.166.140.245/homarus"
+ alpaca_fits_base_url: "http://35.166.140.245/crayfits"
  tomcat8_home: /var/lib/tomcat8

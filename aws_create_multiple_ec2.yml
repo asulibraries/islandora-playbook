@@ -1,4 +1,4 @@
-- hosts: localhost #boto takes care of this?
+- hosts: localhost
   connection: local
   gather_facts: False
   vars:
@@ -23,6 +23,15 @@
           "tag:Name": "Repo-Dev-Split-webserver"
       register: webserver_instances
 
+    - name: debug
+      debug:
+        var: webserver_instances.instances[0].private_ip_address
+    
+    - name: make ip string
+      set_fact:
+        web_priv_ip: "{{ webserver_instances.instances[0].private_ip_address }}/32"
+
+
     - name: get the services server IP
       ec2_instance_facts:
         aws_secret_key: "{{ aws_secret_key }}"
@@ -33,7 +42,35 @@
           "tag:Name": "Repo-Dev-Split-services"
       register: services_instances
 
-    - name: create ec2
+    - name: create webserver ec2
+      ec2:
+        key_name: "{{ keypair }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        group: "{{ security_group }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image }}"
+        wait: true
+        region: "{{ region }}"
+        count: "{{ count }}"
+        # vpc_subnet_id: subnet-0a175a933a579e7ea
+        vpc_subnet_id: subnet-0b74ab7097f3deb11
+        assign_public_ip: no
+        instance_tags:
+          repository_purpose: islandora-split
+          Name: "Repo-Dev-Split-{{ item }}"
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 8
+            delete_on_termination: true
+      with_items:
+        - "webserver"
+        # - "services"
+      register: ec2-web
+      # when: (webserver_instances|length < 1) and (services_instances|length < 1)
+      when: webserver_instances.instances|length < 1
+
+    - name: create services ec2
       ec2:
         key_name: "{{ keypair }}"
         aws_secret_key: "{{ aws_secret_key }}"
@@ -45,6 +82,8 @@
         region: "{{ region }}"
         count: "{{ count }}"
         vpc_subnet_id: subnet-0a175a933a579e7ea
+        # vpc_subnet_id: subnet-0b74ab7097f3deb11
+        assign_public_ip: no
         instance_tags:
           repository_purpose: islandora-split
           Name: "Repo-Dev-Split-{{ item }}"
@@ -53,30 +92,31 @@
             volume_size: 8
             delete_on_termination: true
       with_items:
-        - "webserver"
+        # - "webserver"
         - "services"
-      register: ec2
-      when: (webserver_instances|length < 1) and (services_instances|length < 1)
+      register: ec2-services
+      # when: (webserver_instances|length < 1) and (services_instances|length < 1)
+      when: services_instances.instances|length < 1
 
-    - name: set the webserver static ip
-      ec2_eip:
-        device_id: "{{ item.instance_id }}"
-        ip: 35.163.77.215
-        region: "{{ region }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        aws_access_key: "{{ aws_access_key }}"
-      with_items: "{{ webserver_instances.instances }}"
-      retries: 5
+    # - name: set the webserver static ip
+    #   ec2_eip:
+    #     device_id: "{{ item.instance_id }}"
+    #     ip: 35.163.77.215
+    #     region: "{{ region }}"
+    #     aws_secret_key: "{{ aws_secret_key }}"
+    #     aws_access_key: "{{ aws_access_key }}"
+    #   with_items: "{{ webserver_instances.instances }}"
+    #   retries: 5
 
-    - name: set the services static ip
-      ec2_eip:
-        device_id: "{{ item.instance_id }}"
-        ip: 35.166.140.245
-        region: "{{ region }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        aws_access_key: "{{ aws_access_key }}"
-      with_items: "{{ services_instances.instances }}"
-      retries: 5
+    # - name: set the services static ip
+    #   ec2_eip:
+    #     device_id: "{{ item.instance_id }}"
+    #     ip: 35.166.140.245
+    #     region: "{{ region }}"
+    #     aws_secret_key: "{{ aws_secret_key }}"
+    #     aws_access_key: "{{ aws_access_key }}"
+    #   with_items: "{{ services_instances.instances }}"
+    #   retries: 5
 
     - name: check for elb security group
       ec2_group_facts:
@@ -103,7 +143,7 @@
           - proto: tcp
             ports:
               - 80
-              - 8000
+              - 8000 # do we need this? probably not in stage/prod
               - 443
             cidr_ip: 0.0.0.0/0
             cidr_ipv6: ::/0
@@ -115,7 +155,7 @@
               #- 149.169.0.0/16 #ASU PUBLIC 1
               #- 129.219.0.0/16 #ASU PUBLIC 2
               #- 209.147.128.0/18 #ASU PUBLIC 3
-              #- 10.192.36.25/32 #private IP
+              #- "{{web_priv_ip}}" #private IP
               #- 10.192.36.190/32 #private IP
               #- 35.166.140.245/32 #services public IP
       register: elb_security_group
@@ -153,15 +193,21 @@
               - 149.169.0.0/16 #ASU PUBLIC 1
               - 129.219.0.0/16 #ASU PUBLIC 2
               - 209.147.128.0/18 #ASU PUBLIC 3
-              - 10.192.36.25/32 #private IP
+              - "{{web_priv_ip}}" #private IP
               - 10.192.36.190/32 #private IP
               - 35.166.140.245/32 #services public IP
               - 98.177.147.219/32 #eli at home
+              - 10.119.23.42/32 #qualys
+              - 129.219.222.58/32 #qualys
+              - 10.119.23.64/32 #qualys
+              - 10.119.23.66/32 #qualys
+              - 10.119.23.68/32 #qualys
             group_id: "{{ elb_security_group.group_id }}"
           - proto: tcp
             from_port: 3306
             to_port: 3306
-            cidr_ip: 10.192.36.25/32
+            cidr_ip: "{{web_priv_ip}}"
+            # can probably remove this one since we're running on the private subnet now
           - proto: tcp
             from_port: 22
             to_port: 22
@@ -174,18 +220,18 @@
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         instance_ids:
-          - "{{ item.instance_id }}"
+          - "{{ webserver_instances.instances[0].instance_id }}"
         region: "{{ region }}"
         groups:
           - "{{ webserver_security_group.group_name }}"
           - "{{ security_group }}"
-      with_items: "{{ webserver_instances.instances }}"
+      # with_items: "{{ webserver_instances.instances[0] }}"
 
     - name: create ELB target group
       elb_target_group:
         name: islandora-webserver-target
-        protocol: http
-        port: 80
+        protocol: https
+        port: 443
         state: present
         region: "{{ region }}"
         aws_secret_key: "{{ aws_secret_key }}"
@@ -194,32 +240,48 @@
         health_check_path: /
         successful_response_codes: "200"
         targets:
-          - Id: "{{ item.instance_id }}"
-            Port: 80
-      with_items: "{{ webserver_instances.instances }}"
+          - Id: "{{ webserver_instances.instances[0].instance_id }}"
+            Port: 443
+      # with_items: "{{ webserver_instances.instances[0] }}"
       register: elb_target_group
 
-    - name: create ELB
-      elb_application_lb:
-        name: "islandora-webserver-elb"
-        state: present
-        aws_secret_key: "{{ aws_secret_key }}"
-        aws_access_key: "{{ aws_access_key }}"
-        region: "{{ region }}"
-        subnets:
-          - subnet-02b1343bf83ae6322
-          - subnet-0a175a933a579e7ea
-        security_groups:
-          - "{{ elb_security_group.group_id }}"
-        listeners:
-          - Protocol: HTTP # options are http, https, ssl, tcp
-            Port: 80
-            # SslPolicy: ELBSecurityPolicy-2016-08
-            # Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
-            #   - CertificateArn: "arn:aws:acm:us-west-2:380105785187:certificate/bfd85bd1-8ca5-4ba4-9b76-04da628e4725"
-            DefaultActions:
-              - Type: forward # Required.
-                TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+    # - name: create ELB
+    #   elb_application_lb:
+    #     name: "islandora-webserver-elb"
+    #     state: present
+    #     aws_secret_key: "{{ aws_secret_key }}"
+    #     aws_access_key: "{{ aws_access_key }}"
+    #     region: "{{ region }}"
+    #     subnets:
+    #       - subnet-02b1343bf83ae6322
+    #       - subnet-0a175a933a579e7ea
+    #     security_groups:
+    #       - "{{ elb_security_group.group_id }}"
+    #     listeners:
+    #       # this did not work through ansible - had to go in to UI and create a listener on the ELB 
+    #       # to forward port 80 to 443 HTTPS
+    #       # - Protocol: HTTP # options are http, https, ssl, tcp
+    #       #   Port: 80
+    #       #   DefaultActions:
+    #       #     - Type: redirect # Required.
+    #       #       TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+    #       #       RedirectConfig:
+    #       #         # https://#{host}:443/#{path}?#{query}
+    #       #         Host: "#{host}"
+    #       #         Path: "#{path}"
+    #       #         Port: 443
+    #       #         Query: "#{query}"
+    #       #         Protocol: "https"
+    #       #         StatusCode: "HTTP_301"
+    #       - Protocol: HTTPS
+    #         Port: 443
+    #         SslPolicy: ELBSecurityPolicy-2016-08
+    #         Certificates: # The ARN of the certificate (only one certficate ARN should be provided)
+    #           - CertificateArn: "arn:aws:acm:us-west-2:380105785187:certificate/bfd85bd1-8ca5-4ba4-9b76-04da628e4725"
+    #         DefaultActions:
+    #           - Type: forward # Required.
+    #             TargetGroupName: "{{ elb_target_group.results[0].target_group_name }}"
+
 
     - name: check for services security group
       ec2_group_facts:
@@ -229,7 +291,7 @@
         filters:
           "group-name": islandora-services
       register: services_security_group
-
+    
     # TODO LOCK THIS FOR SSH
     # SSH port 22 should be set to
     # 10.192.0.0/16 ASULIB
@@ -251,31 +313,42 @@
         rules:
           - proto: tcp
             ports:
-              - 80
               - 8080
-              - 443
               - 8161
               - 61613
               - 61616
               - 8983
+              - 80
+              # - 443 # not sure if this is being used
             cidr_ip:
               - 172.31.16.0/20 #ASU VPN 1
               - 172.31.32.0/20 #ASU VPN 2
               - 149.169.0.0/16 #ASU PUBLIC 1
               - 129.219.0.0/16 #ASU PUBLIC 2
               - 209.147.128.0/18 #ASU PUBLIC 3
-              - 10.192.36.25/32 #private IP services
-              - 10.192.36.190/32 #private IP
-              - 35.163.77.215/32 #webserver IP
+              # - 10.192.36.190/32 #private IP
+              # - "{{web_priv_ip}}" #private IP services
+              # - 52.25.225.253/32 #ELB
+              # - 35.167.139.18/32 #ELB
+              - 34.208.70.8/32 # new public IP of webserver
+              # - 35.163.77.215/32 #webserver IP
               - 98.177.147.219/32 #eli at home
           - proto: tcp
-            from_port: 3306
-            to_port: 3306
-            cidr_ip: 10.192.36.190/32
-          - proto: tcp
-            from_port: 22
-            to_port: 22
-            cidr_ip: 98.177.147.219/32 #eli at home
+            ports: 3306
+            cidr_ip:
+              - 10.192.36.190/32
+          - proto: all
+            cidr_ip: 
+              - 98.177.147.219/32 #eli at home
+              - 35.166.140.245/32 #itself
+              - "{{ web_priv_ip }}" #webserver
+              - 10.192.36.190/32 #private IP
+              - 52.25.225.253/32 #ELB
+              - 35.167.139.18/32 #ELB
+              # we think it might just be the 10.192.*
+              # with restrict it to the webserver security group
+              # and possibly the public IPs of the ELB
+              # plus whatever small group of humans (devs) need to access
       register: services_security_group
 
     - name: assign services security group
@@ -296,23 +369,24 @@
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
-        id: islandora-drupal
+        id: islandora-drupal2
       register: drupal_rds_instance
 
     - name: create Drupal RDS
       rds:
         command: create
-        instance_name: islandora-drupal
+        instance_name: islandora-drupal2
         db_engine: MySQL
         size: 10
         instance_type: db.t2.micro
         username: drupal8
-        db_name: drupal8
+        db_name: drupal8v2
         password: "{{ drupal_db_password }}"
         vpc_security_groups: "{{ webserver_security_group.group_id }}"
         aws_secret_key: "{{ aws_secret_key }}"
         aws_access_key: "{{ aws_access_key }}"
         region: "{{ region }}"
+        engine_version: 5.7.30
         subnet: libdev-db-private-ips
         tags:
           Application: islandora
@@ -372,7 +446,34 @@
           Application: islandora
       when: matomo_rds_instance.instances|length < 1
 
-    - name: check for main s3
+    - name: check for gemini RDS
+      rds_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        id: islandora-gemini
+      register: gemini_rds_instance
+
+    - name: create gemini RDS
+      rds:
+        command: create
+        instance_name: islandora-gemini
+        db_engine: MySQL
+        size: 10
+        instance_type: db.t2.micro
+        username: crayfish
+        db_name: gemini
+        password: "{{ crayfish_db_password }}"
+        vpc_security_groups: "{{ services_security_group.group_id }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        subnet: libdev-db-private-ips
+        tags:
+          Application: islandora
+      when: gemini_rds_instance.instances|length < 1
+
+    - name: check for bags s3
       block:
         - aws_s3:
             mode: list
@@ -384,7 +485,7 @@
             name: asulibdev-islandora-bucket
             aws_secret_key: "{{ aws_secret_key }}"
             aws_access_key: "{{ aws_access_key }}"
-            region: us-east-1
+            region: us-west-2
             state: present
             versioning: yes
   
@@ -400,11 +501,77 @@
             name: fcrepo-filestore
             aws_secret_key: "{{ aws_secret_key }}"
             aws_access_key: "{{ aws_access_key }}"
+            region: us-west-2
+            state: present
+            versioning: yes
+
+    - name: check for drupal filesystem s3
+      block:
+        - aws_s3:
+            mode: list
+            bucket: islandora-drupal
+            aws_secret_key: "{{ aws_secret_key }}"
+            aws_access_key: "{{ aws_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: islandora-drupal
+            aws_secret_key: "{{ aws_secret_key }}"
+            aws_access_key: "{{ aws_access_key }}"
+            region: us-west-2
+            state: present
+            versioning: yes
+
+    - name: check for bags s3 in disaster recovery
+      block:
+        - aws_s3:
+            mode: list
+            bucket: asulibdev-islandora-bucket-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: asulibdev-islandora-bucket-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
             region: us-east-1
             state: present
             versioning: yes
 
+    - name: check for fedora s3 in disaster recovery
+      block:
+        - aws_s3:
+            mode: list
+            bucket: fcrepo-files-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: fcrepo-files-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+            region: us-east-1
+            state: present
+            versioning: yes
 
+    - name: check for drupal filesystem s3 in disaster recovery
+      block:
+        - aws_s3:
+            mode: list
+            bucket: islandora-drupal-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+      rescue:
+        - s3_bucket:
+            name: islandora-drupal-dr
+            aws_secret_key: "{{ aws_dr_secret_key }}"
+            aws_access_key: "{{ aws_dr_access_key }}"
+            region: us-east-1
+            state: present
+            versioning: yes
+
+# note that lifecycle rules to push s3 -> dr s3 were done manually in the aws console
+# add rds parameter group to up the max_allowed_packets
+# manually set up simple email service
 
 
 

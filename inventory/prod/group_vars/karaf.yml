@@ -1,0 +1,20 @@
+---
+
+# Comment in to build Alpaca from source
+ alpaca_from_source: yes
+ alpaca_version: dev
+ alpaca_clone_directory: /opt/alpaca
+ alpaca_karaf_repos:
+  - mvn:org.apache.camel.karaf/apache-camel/2.20.4/xml/features
+  - mvn:org.apache.activemq/activemq-karaf/5.15.0/xml/features
+  - mvn:ca.islandora.alpaca/islandora-karaf/LATEST/xml/features
+ apache_listen_port: 80
+
+ triplestore_namespace: islandora
+ alpaca_triplestore_base_url: http://10.192.17.250:8080/bigdata
+ alpaca_milliner_base_url: "http://10.192.17.250/milliner/"
+ alpaca_gemini_base_url: http://10.192.17.250/gemini/
+ alpaca_houdini_base_url: "http://10.192.17.250/houdini"
+ alpaca_homarus_base_url: "http://10.192.17.250/homarus"
+ alpaca_fits_base_url: "http://10.192.17.250/crayfits"
+ tomcat8_home: /var/lib/tomcat8

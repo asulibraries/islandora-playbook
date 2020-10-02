@@ -1,0 +1,17 @@
+- name: Copy database backup script
+  template:
+    src: "services_backups.sh.j2"
+    dest: "/home/ubuntu/services_backups.sh"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0744'
+
+- name: Set up cron task
+  cron:
+    name: "database backups"
+    job: "/home/ubuntu/services_backups.sh"
+    hour: 2
+    minute: 30
+    user: ubuntu
+  become: True
+  when: inventory_dir is regex("stage|prod|aws")
