@@ -187,8 +187,12 @@
       - islandora_matomo_blocks
       - islandora_repository_reports
       - islandora_tokens
-      - self_deposit
       - soft_delete
+      - externalauth
+      - cas
+      - cdn
+      - s3fs
+      - clamav
     prism_themes:
       - bartik
       - claro
