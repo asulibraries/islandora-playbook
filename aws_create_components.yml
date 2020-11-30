@@ -602,6 +602,35 @@
           Application: islandora
       when: drupal_rds_instance.instances|length < 1
 
+    - name: check for Drupal web RDS - PRISM
+      rds_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        id: "{{ prefix }}prism"
+      register: prism_rds_instance
+
+    - name: create Drupal web RDS - PRISM
+      rds:
+        command: create
+        instance_name: "{{ prefix }}prism"
+        db_engine: MySQL
+        size: 10
+        instance_type: db.t2.micro
+        username: drupal8
+        db_name: drupal8
+        password: "{{ drupal_db_password }}"
+        vpc_security_groups: "sg-0ab6b099ca77d3158"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        engine_version: 5.7.30
+        subnet: "{{ rds_subnet }}"
+        parameter_group: "{{prefix}}mysql-5-7-params"
+        tags:
+          Application: islandora
+      when: prism_rds_instance.instances|length < 1
+
     - name: check for Drupal landing RDS
       rds_instance_facts:
         aws_secret_key: "{{ aws_secret_key }}"
@@ -759,6 +788,15 @@
             region: "{{ region }}"
             state: present
             versioning: yes
+
+    - name: create prism folder in drupal webser s3
+      aws_s3:
+        bucket: "{{ prefix }}drupal-ir-bucket"
+        object: "/prism"
+        mode: create
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
 
     - name: check for landing drupal filesystem s3
       block:
