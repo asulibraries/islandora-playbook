@@ -1,0 +1,287 @@
+---
+
+- hosts: webserver
+  become: yes
+
+  vars:
+    php_version: "7.2"
+    prism_directory: /var/www/html/drupal/web/sites/prism.lib.asu.edu
+    prism_modules:
+      - action
+      - automated_cron
+      - basic_auth
+      - big_pipe
+      - block
+      - block_content
+      - breakpoint
+      - ckeditor
+      - color
+      - comment
+      - config
+      - contact
+      - content_moderation
+      - content_translation
+      - contextual
+      - datetime
+      - dblog
+      - dynamic_page_cache
+      - editor
+      - entity_reference
+      - field
+      - field_ui
+      - file
+      - filter
+      - hal
+      - help
+      - history
+      - image
+      - jsonapi
+      - language
+      - layout_discovery
+      - link
+      - media
+      - menu_link_content
+      - menu_ui
+      - migrate
+      - node
+      - options
+      - page_cache
+      - path
+      - path_alias
+      - quickedit
+      - rdf
+      - responsive_image
+      - rest
+      - serialization
+      - shortcut
+      - simpletest
+      - syslog
+      - system
+      - taxonomy
+      - text
+      - toolbar
+      - tour
+      - tracker
+      - update
+      - user
+      - views
+      - views_ui
+      - workflows
+      - address
+      - admin_toolbar
+      - admin_toolbar_tools
+      - bibcite
+      - config_filter
+      - config_split
+      - config_update
+      - content_browser
+      - context
+      - context_ui
+      - controlled_access_terms
+      - controlled_access_terms_defaults
+      - ctools
+      - devel
+      - kint
+      - diff
+      - embed
+      - entity
+      - entity_browser
+      - entity_embed
+      - entity_reference_revisions
+      - entity_reference_unpublished
+      - eva
+      - facets
+      - facets_range_widget
+      - facets_rest
+      - facets_summary
+      - features
+      - features_ui
+      - field_group
+      - field_permissions
+      - file_replace
+      - filehash
+      - flexslider
+      - flexslider_fields
+      - flexslider_views
+      - flysystem
+      - format_bytes
+      - geolocation
+      - group
+      - gnode
+      - hook_post_action
+      - inline_entity_form
+      - islandora
+      - islandora_audio
+      - islandora_breadcrumbs
+      - islandora_core_feature
+      - islandora_iiif
+      - islandora_image
+      - islandora_text_extraction
+      - islandora_text_extraction_defaults
+      - islandora_video
+      - islandora_bagger_integration
+      - islandora_defaults
+      - islandora_oaipmh
+      - islandora_search
+      - islandora_fits
+      - islandora_riprap
+      - jsonb
+      - jsonld
+      - jwt
+      - key
+      - libraries
+      - matomo
+      - metatag
+      - metatag_google_scholar
+      - migrate_devel
+      - migrate_file
+      - migrate_plus
+      - migrate_source_csv
+      - migrate_tools
+      - name
+      - openseadragon
+      - paragraphs
+      - pathauto
+      - pdf
+      - hdl
+      - persistent_identifiers
+      - prepopulate
+      - rest_oai_pmh
+      - restui
+      - rrssb
+      - schema_metatag
+      - search_api
+      - search_api_solr_defaults
+      - search_api_solr
+      - simple_sitemap
+      - smtp
+      - superfish
+      - title_length
+      - token
+      - transliterate_filenames
+      - twig_tweak
+      - upgrade_status
+      - variationcache
+      - views_bootstrap
+      - views_bulk_edit
+      - views_bulk_operations
+      - webform_ui
+      - webform
+      - workbench
+      - workbench_email
+      - asu_brand
+      - asu_breadcrumbs
+      - asu_collection_extras
+      - asu_custom_rdf
+      - asu_default_fields
+      - asu_islandora_utils
+      - asu_item_extras
+      - asu_landing_site
+      - asu_migrate
+      - asu_mods
+      - asu_permissions
+      - asu_search
+      - asu_searchable_entity_formatter
+      - asu_taxonomies
+      - bagger_extension
+      - content_change_digest
+      - deposit_agreement
+      - entity_markdown
+      - islandora_matomo
+      - islandora_matomo_blocks
+      - islandora_repository_reports
+      - islandora_tokens
+      - migrate_source_ui
+      - repo_bento_search
+      - self_deposit
+      - soft_delete
+    prism_themes:
+      - bartik
+      - claro
+      - classy
+      - seven
+      - stable
+      - at_core
+      - bootstrap_barrio
+      - bootstrap_sass
+      - carapace
+      - asulib_barrio
+
+  environment:
+    COMPOSER_MEMORY_LIMIT: -1
+
+  tasks:
+    - name: create prism directory
+      file:
+        path: "{{ prism_directory }}"
+        state: directory
+        owner: ubuntu
+        group: www-data
+        mode: 0775
+
+    - name: copy example.sites.php
+      copy:
+        src: /var/www/html/drupal/web/sites/example.sites.php
+        dest: /var/www/html/drupal/web/sites/sites.php
+
+    - name: add new site to sites.php
+      lineinfile:
+        path: "/var/www/html/drupal/web/sites/sites.php"
+        line: "$sites['prism.lib.asu.edu'] = 'prism.lib.asu.edu'"
+
+    - name: edit apache config
+      blockinfile:
+        path: "/etc/apache2/sites-enabled/islandora.conf"
+        block: |
+          <VirtualHost *:443>
+            ServerName prism.lib.asu.edu
+            DocumentRoot "/var/www/html/drupal/web"
+
+            SSLEngine on
+            SSLCipherSuite AES256+EECDH:AES256+EDH
+            SSLProtocol All -SSLv2 -SSLv3
+            SSLHonorCipherOrder On
+            SSLCompression off
+            SSLCertificateFile /etc/ssl/private/__lib_asu_edu.cer
+            SSLCertificateKeyFile /etc/ssl/private/__lib_asu_edu.key
+
+            <Directory "/var/www/html/drupal/web">
+              AllowOverride All
+              Options -Indexes +FollowSymLinks
+              Require all granted
+            </Directory>
+            RewriteEngine On
+            RewriteCond %{HTTPS} !=on
+            RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+          </VirtualHost>
+
+    - name: create a new settings.php from default.settings.php in the sites/prism directory
+      copy:
+        src: /var/www/html/drupal/web/sites/default/default.settings.php
+        dest: "{{ prism_directory }}/settings.php"
+        mode: '0777'
+
+    # - name: enable modules by running drush commands inside the prism directory
+    #   command: >
+    #     {{ drush_path }} pm-enable -y {{ prism_modules | join(" ") }}
+    #     --root={{ prism_directory }}
+    #   args:
+    #     chdir: "{{ prism_directory }}"
+    #   become: no
+
+    # - name: enable themes by running drush commands inside the prism directory
+    #   command: >
+    #     {{ drush_path }} pm-themes -y {{ prism_themes | join(" ") }}
+    #     --root={{ prism_directory }}
+    #   args:
+    #     chdir: "{{ prism_directory }}"
+    #   become: no
+
+    # - name: edit the settings.php
+    #   blockinfile:
+    #     path: "{{ prism_direcotry }}/settings.php"
+    #     insertafter: ""
+    #     block: |
+
+
+
