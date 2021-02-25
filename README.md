@@ -3,7 +3,7 @@
 
 ## Introduction
 
-This is an Ansible playbook for Islandora 8. It also has a vagrant file to bring up a release or development virtual machine for Islandora 8.
+This is an Ansible playbook for Islandora 8. It also has a vagrant file to bring up a release or development virtual machine for Islandora 8. For an alternative installation using Docker, please see [ISLE](https://islandora.github.io/documentation/installation/docker-compose/).
 
 This virtual machine **should not** be used in production **yet**.
 
@@ -98,7 +98,7 @@ You can access the IIIF interface at: http://localhost:8080/cantaloupe/iiif/2/
 ### JWT
 
 Islandora 8 uses JWT for authentication across the stack. Crayfish microservices, Fedora, and Drupal all use them. 
-Crayfish and Fedora have been set up to use a master token of `islandora` to make testing easier. To use it, just set
+Crayfish and Fedora have been set up to use a default token of `islandora` to make testing easier. To use it, just set
 the following header in HTTP requests:
 
   * `Authorization: Bearer islandora`

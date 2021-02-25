@@ -80,7 +80,6 @@
       - controlled_access_terms
       - controlled_access_terms_defaults
       - ctools
-      - devel
       - kint
       - diff
       - embed
@@ -133,7 +132,6 @@
       - matomo
       - metatag
       - metatag_google_scholar
-      - migrate_devel
       - migrate_file
       - migrate_plus
       - migrate_source_csv
@@ -163,8 +161,8 @@
       - upgrade_status
       - variationcache
       - views_bootstrap
-      - views_bulk_edit
       - views_bulk_operations
+      - views_bulk_edit
       - webform_ui
       - webform
       - workbench
@@ -176,7 +174,6 @@
       - asu_default_fields
       - asu_islandora_utils
       - asu_item_extras
-      - asu_landing_site
       - asu_migrate
       - asu_mods
       - asu_permissions
@@ -186,15 +183,16 @@
       - bagger_extension
       - content_change_digest
       - deposit_agreement
-      - entity_markdown
       - islandora_matomo
       - islandora_matomo_blocks
       - islandora_repository_reports
       - islandora_tokens
-      - migrate_source_ui
-      - repo_bento_search
-      - self_deposit
       - soft_delete
+      - externalauth
+      - cas
+      - cdn
+      - s3fs
+      - clamav
     prism_themes:
       - bartik
       - claro
@@ -223,11 +221,12 @@
       copy:
         src: /var/www/html/drupal/web/sites/example.sites.php
         dest: /var/www/html/drupal/web/sites/sites.php
+        remote_src: True
 
     - name: add new site to sites.php
       lineinfile:
         path: "/var/www/html/drupal/web/sites/sites.php"
-        line: "$sites['prism.lib.asu.edu'] = 'prism.lib.asu.edu'"
+        line: "$sites['prism.lib.asu.edu'] = 'prism.lib.asu.edu';"
 
     - name: edit apache config
       blockinfile:
@@ -260,22 +259,23 @@
         src: /var/www/html/drupal/web/sites/default/default.settings.php
         dest: "{{ prism_directory }}/settings.php"
         mode: '0777'
+        remote_src: True
 
-    # - name: enable modules by running drush commands inside the prism directory
-    #   command: >
-    #     {{ drush_path }} pm-enable -y {{ prism_modules | join(" ") }}
-    #     --root={{ prism_directory }}
-    #   args:
-    #     chdir: "{{ prism_directory }}"
-    #   become: no
+    - name: enable modules by running drush commands inside the prism directory
+      command: >
+        {{ drush_path }} pm-enable -y {{ prism_modules | join(" ") }}
+        --root={{ prism_directory }}
+      args:
+        chdir: "{{ prism_directory }}"
+      become: no
 
-    # - name: enable themes by running drush commands inside the prism directory
-    #   command: >
-    #     {{ drush_path }} pm-themes -y {{ prism_themes | join(" ") }}
-    #     --root={{ prism_directory }}
-    #   args:
-    #     chdir: "{{ prism_directory }}"
-    #   become: no
+    - name: enable themes by running drush commands inside the prism directory
+      command: >
+        {{ drush_path }} theme-enable -y {{ prism_themes | join(",") }}
+        --root={{ prism_directory }}
+      args:
+        chdir: "{{ prism_directory }}"
+      become: no
 
     # - name: edit the settings.php
     #   blockinfile:
