@@ -94,6 +94,11 @@
     path: "/var/www/html/drupal/web/sites/default/settings.php"
     line: "$settings['s3fs.use_s3_for_public'] = TRUE;"
 
-# TODO 
+- name: remove changelog.txt for path-based vulnerability
+  ansible.builtin.file:
+    src: /var/www/html/drupal/web/core/CHANGELOG.txt
+    state: absent
+
+# TODO
 # add the password for LDAP from the yml
 # $settings['ldap_servers.server.asu_ldap']['bindpw'] = '';
