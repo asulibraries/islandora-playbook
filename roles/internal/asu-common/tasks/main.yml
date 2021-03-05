@@ -7,3 +7,4 @@
 - import_tasks: permissions.yml
 - import_tasks: assets.yml
 - import_tasks: db-backups.yml
+- import_tasks: logrotate.yml

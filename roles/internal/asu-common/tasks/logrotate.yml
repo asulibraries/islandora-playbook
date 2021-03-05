@@ -1,0 +1,3 @@
+- name: add logrotate config
+  template: src=repo-logrotate.j2  dest=/etc/logrotate.d/asurepo
+  become: True

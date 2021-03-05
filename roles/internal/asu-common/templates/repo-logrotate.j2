@@ -1,0 +1,23 @@
+/var/log/islandora/*.log {
+    daily
+    rotate 7
+    nocompress
+    nocreate
+    missingok
+}
+
+/var/log/islandora/*.log.7 {
+    weekly
+    rotate 4
+    compress
+    nocreate
+    missingok
+}
+
+/var/log/islandora/*.log.4 {
+    monthly
+    rotate 2
+    compress
+    nocreate
+    missingok
+}
