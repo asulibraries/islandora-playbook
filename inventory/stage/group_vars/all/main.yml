@@ -76,11 +76,9 @@ drupal_composer_dependencies:
   - "drupal/transliterate_filenames:^1.3"
   - "islandora/carapace:dev-8.x-3.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
-  - "drupal/orcid"
   # - "drupal/message"
   # - "drupal/message_digest"
   # - "drupal/message_subscribe_email"
-  - "drupal/bibcite"
   - "drupal/webform"
   - "drupal/workbench"
   - "drupal/schema_metatag"
@@ -89,7 +87,6 @@ drupal_composer_dependencies:
   - "drupal/migrate_run"
   - "drupal/weight"
   - "drupal/superfish"
-  - "drupal/at_tools"
   # https://github.com/roblib/lc_subject_field
   # https://github.com/UNLV-Libraries/archivesspace-drupal
   # https://github.com/mjordan/islandora_workbench
@@ -125,8 +122,6 @@ drupal_enable_modules:
   - clamav
   - features
   - admin_toolbar_tools
-  - orcid
-  - bibcite
   - islandora_core_feature
   - islandora_text_extraction
   - islandora_text_extraction_defaults

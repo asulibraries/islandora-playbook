@@ -28,14 +28,12 @@ drupal_composer_dependencies:
   - "drupal/context:^4.0@beta"
   - "islandora/controlled_access_terms:dev-8.x-1.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
-  - "islandora-rdm/islandora_fits:dev-8.x-1.x
-  - "drupal/orcid"
+  - "islandora-rdm/islandora_fits:dev-8.x-1.x"
   - "drupal/diff"
   - "drupal/rrssb"
   # - "drupal/message"
   # - "drupal/message_digest"
   # - "drupal/message_subscribe_email"
-  - "drupal/bibcite"
   - "drupal/webform"
   - "drupal/workbench"
   - "drupal/schema_metatag"
@@ -44,7 +42,6 @@ drupal_composer_dependencies:
   - "drupal/migrate_run"
   - "drupal/weight"
   - "drupal/superfish"
-  - "drupal/at_tools"
   # https://github.com/roblib/lc_subject_field
   # https://github.com/UNLV-Libraries/archivesspace-drupal
   # https://github.com/mjordan/islandora_workbench
@@ -90,8 +87,6 @@ drupal_enable_modules:
   - clamav
   - features
   - admin_toolbar_tools
-  - orcid
-  - bibcite
   - islandora_core_feature
   - islandora_text_extraction
   - islandora_text_extraction_defaults

@@ -11,7 +11,6 @@ drupal_composer_dependencies:
   - "drupal/rdfui:^1.0-beta1"
   - "drupal/restui:^1.16"
   - "drupal/search_api_solr:^4.1"
-  - "drupal/facets:^1.6"
   - "drupal/content_browser:^1.0@alpha"
   - "drupal/matomo:^1.7"
   - "drupal/pdf:1.x-dev"
@@ -27,14 +26,12 @@ drupal_composer_dependencies:
   - "drupal/context:^4.0@beta"
   - "islandora/controlled_access_terms:dev-8.x-1.x"
   - "islandora/islandora_defaults:dev-8.x-1.x"
-  - "islandora-rdm/islandora_fits:dev-8.x-1.x
-  - "drupal/orcid"
+  - "islandora-rdm/islandora_fits:dev-8.x-1.x"
   - "drupal/diff"
   - "drupal/rrssb"
   # - "drupal/message"
   # - "drupal/message_digest"
   # - "drupal/message_subscribe_email"
-  - "drupal/bibcite"
   - "drupal/webform"
   - "drupal/workbench"
   - "drupal/schema_metatag"
@@ -43,7 +40,6 @@ drupal_composer_dependencies:
   - "drupal/migrate_run"
   - "drupal/weight"
   - "drupal/superfish"
-  - "drupal/at_tools"
   # https://github.com/roblib/lc_subject_field
   # https://github.com/UNLV-Libraries/archivesspace-drupal
   # https://github.com/mjordan/islandora_workbench
@@ -87,8 +83,6 @@ drupal_enable_modules:
   - config_split
   - features
   - admin_toolbar_tools
-  - orcid
-  - bibcite
   - diff
   - rrssb
   - islandora_core_feature
