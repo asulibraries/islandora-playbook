@@ -1,0 +1,241 @@
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    instance_type: t2.medium
+    security_group: PROD-ASU-IP-ALL
+    image: ami-06d51e91cea0dac8d
+    keypair: ASU-LIB-EC2-General
+    region: us-west-2
+    dr_region: us-east-1
+    count: 1
+    prefix: islandora-
+    private_subnet: subnet-0e93560dfb1864c2d 
+    public_subnet_a: subnet-07f370cafffaa5206
+    public_subnet_b: subnet-021ff3f60cc4e56f6
+    vpc_id: vpc-09949d0d16ed55e42
+    asu_vpn_ip_1: 172.31.32.0/20
+    asu_vpn_ip_2: 172.31.16.0/20
+    star_lib_cert: "arn:aws:acm:us-west-2:141031099449:certificate/e44158ad-91d3-4ad6-8f32-71144459dde9"
+    rds_subnet: "lib-prod-rds-private"
+  vars_files:
+    - aws_keys_prod.yml
+    - inventory/prod/group_vars/all/passwords.yml
+  tasks:
+    - name: get the webserver IP
+      ec2_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "tag:repository_purpose": "{{ prefix }}split"
+          "tag:Name": "{{ prefix }}webserver2"
+          "tag:Team": "Islandora"
+      register: webserver_instances
+
+    - name: debug
+      debug:
+        var: webserver_instances.instances[0].private_ip_address
+
+    - name: create webserver ec2
+      ec2:
+        key_name: "{{ keypair }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        group: "{{ security_group }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image }}"
+        wait: true
+        region: "{{ region }}"
+        count: "{{ count }}"
+        vpc_subnet_id: "{{private_subnet}}"
+        assign_public_ip: no
+        instance_tags:
+          repository_purpose: "{{ prefix }}split"
+          Name: "{{ prefix }}{{ item }}"
+          Team: "Islandora"
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 8
+            delete_on_termination: true
+      with_items:
+        - "webserver2"
+      register: webserver_instances # ec2-web
+      when: webserver_instances.instances|length < 1
+
+    - name: get the webserver IP
+      ec2_instance_facts:
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        filters:
+          "tag:repository_purpose": "{{ prefix }}split"
+          "tag:Name": "{{ prefix }}webserver2"
+          "tag:Team": "Islandora"
+      register: webserver_instances
+
+    - name: debug
+      debug:
+        var: webserver_instances.instances[0].private_ip_address
+
+    - name: make webserver ip string
+      set_fact:
+        web_priv_ip: "{{ webserver_instances.instances[0].private_ip_address }}/32"
+
+    - name: check for elb webserver security group
+      ec2_group_facts:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        filters:
+          "group-name": "{{ prefix }}webserver2-elb"
+      register: elb_webserver_security_group
+
+    - name: create elb webserver security group
+      ec2_group:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        description: "security group for islandora webserver elb"
+        name: "{{ prefix }}webserver2-elb"
+        vpc_id: "{{ vpc_id }}"
+        rules_egress:
+          - proto: all
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+        rules:
+          - proto: tcp
+            ports:
+              - 80
+              - 443
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+      register: elb_webserver_security_group
+
+    - name: check for webserver security group
+      ec2_group_facts:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        filters:
+          "group-name": "{{ prefix}}webserver2"
+      register: webserver_security_group
+
+    - name: create webserver security group
+      ec2_group:
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        description: "security group for islandora webserver2"
+        name: "{{ prefix}}webserver2"
+        vpc_id: "{{ vpc_id }}"
+        rules_egress:
+          - proto: all
+            cidr_ip: 0.0.0.0/0
+            cidr_ipv6: ::/0
+        rules:
+          - proto: tcp
+            ports:
+              - 80
+              - 443
+            group_id: "{{ elb_webserver_security_group.group_id }}"
+          - proto: tcp
+            from_port: 3306
+            to_port: 3306
+            cidr_ip: "{{web_priv_ip}}"
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip:
+              - "{{ asu_vpn_ip_1 }}"
+              - "{{ asu_vpn_ip_2 }}"
+      register: webserver_security_group
+
+    - name: assign webserver security group
+      ec2:
+        state: running
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        instance_ids:
+          - "{{ webserver_instances.instances[0].instance_id }}"
+        region: "{{ region }}"
+        groups:
+          - "{{ webserver_security_group.group_name }}"
+          # - "{{ security_group }}"
+
+    - name: create webserver ELB target group
+      elb_target_group:
+        name: "{{ prefix}}webserver2-target"
+        protocol: https
+        port: 443
+        state: present
+        region: "{{ region }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        vpc_id: "{{ vpc_id }}"
+        health_check_path: /
+        successful_response_codes: "200"
+        targets:
+          - Id: "{{ webserver_instances.instances[0].instance_id }}"
+            Port: 443
+      register: elb_web_target_group
+
+    - name: get elb webserver
+      elb_application_lb_facts:
+        names: "{{ prefix }}webserver2-elb"
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+      register: elb_webserver
+
+    - name: create webserver ELB - this is keep.lib.asu.edu
+      elb_application_lb:
+        name: "{{ prefix }}webserver2-elb"
+        state: present
+        aws_secret_key: "{{ aws_secret_key }}"
+        aws_access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+        subnets:
+          - "{{ public_subnet_a }}"
+          - "{{ public_subnet_b }}"
+        security_groups:
+          - "{{ elb_webserver_security_group.group_id }}"
+        listeners:
+          # this did not work through ansible - had to go in to UI and create a listener on the ELB 
+          # to forward port 80 to 443 HTTPS
+          # - Protocol: HTTP # options are http, https, ssl, tcp
+          #   Port: 80
+          #   DefaultActions:
+          #     - Type: redirect # Required.
+          #       TargetGroupName: "{{ elb_web_target_group.results[0].target_group_name }}"
+          #       RedirectConfig:
+          #         # https://#{host}:443/#{path}?#{query}
+          #         Host: "#{host}"
+          #         Path: "#{path}"
+          #         Port: 443
+          #         Query: "#{query}"
+          #         Protocol: "https"
+          #         StatusCode: "HTTP_301"
+          - Protocol: HTTPS
+            Port: 443
+            SslPolicy: ELBSecurityPolicy-2016-08
+            Certificates:
+              - CertificateArn: "{{ star_lib_cert }}"
+            DefaultActions:
+              - Type: forward
+                TargetGroupName: "{{ elb_web_target_group.target_group_name }}"
+      when: elb_webserver.load_balancers|length < 1
+
+
+
+
+# note that replication rules to push s3 -> dr s3 were done manually in the aws console
+          # entire bucket replicate to DR account with storage class Glacier
+# note that lifecycle rules to push standard to intelligent tiering done manually in the aws console
+          # entire bucket Transition to Intelligent-Tiering after 1 day
+# note that elb redirect from 80 -> 443 done manually in the aws console
+# note that SMTP credentials were created manually under SES > SMTP Settings and need to be added
+          # to the aws_keys_prod.yml prior to playbook.yml deploy
+# note that the keypair for the iam user for s3 will need to be extracted through the UI
+
+
