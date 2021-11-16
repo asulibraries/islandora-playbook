@@ -1,0 +1,7 @@
+#!/bin/sh
+{{ etdload_venv }}/bin/etdload \
+    {% for email in etdload_notify -%}
+    --notify {{ email }} \
+    {% endfor -%}
+    {{ etdload_package_dir }} \
+    {{ etdload_collection_id }} keep

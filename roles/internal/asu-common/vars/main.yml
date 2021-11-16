@@ -1,2 +1,10 @@
 drush_path: "/usr/local/bin/drush"
 drupal_core_path: "/var/www/html/drupal/web"
+
+etdload_venv: "/var/www/html/.etdloadenv"
+etdload_repo: "git@bitbucket.org:asulibraries/etdload.git"
+etdload_home: "/var/www/html/etdload"
+etdload_package_dir: /mnt/ndrive/Repository/Temp
+etdload_collection_id: 149053
+etdload_notify:
+  - 'digitalrepository@asu.edu'

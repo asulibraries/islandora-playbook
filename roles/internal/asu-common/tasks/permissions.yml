@@ -5,3 +5,10 @@
     group: www-data
     mode: 0775
     state: directory
+- name: create directory for drupal logs
+  file:
+    path: /var/log/islandora/drupal
+    owner: ubuntu
+    group: ubuntu
+    mode: 0775
+    state: directory

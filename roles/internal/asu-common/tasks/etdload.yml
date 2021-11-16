@@ -1,0 +1,36 @@
+- name: checkout etdload codebase
+  git:
+    repo: "{{ etdload_repo }}"
+    dest: "{{ etdload_home }}"
+    force: no
+    accept_hostkey: yes
+  become_user: repo
+
+- name: install etdload dependencies
+  pip:
+    requirements: "{{ etdload_home }}/requirements.txt"
+    virtualenv: "{{ etdload_venv }}"
+    chdir: "{{ etdload_home }}"
+  become_user: ubuntu
+
+- name: install the etdload command
+  command: '{{ etdload_venv }}/bin/pip install -e {{ etdload_home }}'
+  become_user: ubuntu
+
+- name: configure etdload script
+  template: 
+    src: 'load-etds.sh.j2'
+    dest: '{{ etdload_home }}/load-etds.sh'
+    mode: "0744"
+    owner: "ubuntu"
+    group: "ubuntu"
+
+- name: set loader to run
+  cron:
+    name: "Load ETDs to the Repository every other month."
+    minute: "0"
+    hour: "6"
+    day: "1"
+    month: "feb,apr,jun,aug,oct,dec"
+    job: "{{ etdload_home }}/load-etds.sh"
+    user: "ubuntu"

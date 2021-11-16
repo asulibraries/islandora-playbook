@@ -8,3 +8,4 @@
 - import_tasks: assets.yml
 - import_tasks: db-backups.yml
 - import_tasks: logrotate.yml
+- import_tasks: etdload.yml
