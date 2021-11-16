@@ -1,20 +1,23 @@
-fcrepo_version: 5.1.0
-fcrepo_user: "{{ tomcat8_server_user }}"
-fcrepo_data_dir: /var/lib/tomcat8/fcrepo4-data
-fcrepo_binary_directory: "{{ fcrepo_data_dir}}/binaries"
-fcrepo_war_path: "{{ tomcat8_home }}/webapps/fcrepo.war"
+fcrepo_version: 6.0.0
+fcrepo_user: "{{ tomcat9_server_user }}"
+fcrepo_war_path: "{{ tomcat9_home }}/webapps/fcrepo.war"
 fcrepo_home_dir: /opt/fcrepo
+fcrepo_data_dir: "{{ tomcat9_home }}/fcrepo-data"
 fcrepo_activemq_template: activemq.xml.j2
 fcrepo_activemq_broker_url: "tcp://localhost:61616"
 fcrepo_config_dir: "{{ fcrepo_home_dir }}/configs"
+fcrepo_config_file: "{{ fcrepo_config_dir }}/fcrepo.properties"
 
-# For file-simple object persistence.
+# For Fedora 5, for production use either "jdbc-mysql" or "jdbc-postgresql"
+fcrepo_persistence: file-simple
+fcrepo_binary_directory: "{{ fcrepo_data_dir}}/binaries"
 fcrepo_object_directory: "{{ fcrepo_data_dir}}/objects"
 
-# For production use either "jdbc-mysql" or "jdbc-postgresql"
-fcrepo_persistence: file-simple
+# Database type for caching/indexes in Fedora 6.
+# Use either "mysql" or "postgresql"
+fcrepo_db_type: mysql
 
-# Used for mysql or postgres object persistence. Please change the password locally!
+# Used for database connection. Please change the password locally!
 fcrepo_db_name: fcrepo
 fcrepo_db_user: fcrepo
 fcrepo_db_password: fcrepo
@@ -30,5 +33,14 @@ fcrepo_allowed_external_content:
   - http://localhost:8000/
 
 fcrepo_allowed_external_content_file: "{{ fcrepo_config_dir }}/allowed-external-content.txt"
+
+# Additional RDF Namespace/prefix mappings can be added here, please review the existing mappings first.
+# These need to be strings to get parsed in to the resulting Yaml file correctly.
+fcrepo_namespace_mappings:
+  - "pcdm: http://pcdm.org/models#"
+  - "pcdmfmt: http://pcdm.org/file-format-types#"
+  - "pcdmrts: http://pcdm.org/rights#"
+  - "pcdmuse: http://pcdm.org/use#"
+  - "pcdmwrks: http://pcdm.org/works#"
 
 fcrepo_auth_header_name:

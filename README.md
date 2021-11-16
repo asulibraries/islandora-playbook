@@ -3,25 +3,34 @@
 
 ## Introduction
 
-This is an Ansible playbook for Islandora 8. It also has a vagrant file to bring up a release or development virtual machine for Islandora 8. For an alternative installation using Docker, please see [ISLE](https://islandora.github.io/documentation/installation/docker-compose/).
+This is an Ansible playbook for provisioning an instance of Islandora. This repository includes a Vagrantfile, so `vagrant up` will create a local virtual machine and run the playbook on it. For an alternative installation using Docker, please see [ISLE](https://islandora.github.io/documentation/installation/docker-compose/).
 
 This virtual machine **should not** be used in production **yet**.
 
 ## Variables
 
+### macOS 12.0 Monterey VirtualBox Workaround
+
+VirtualBox has not been updated to work fully with macOS Monterey as of October, 2021.
+A workaround exists, which is to run VirtualBox in non-headless mode.
+
+In your Vagrantfile, add the line 'v.gui = true' to the configuration section near the top:
+
+```
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.provider "virtualbox" do |v|
+    v.name = "Islandora 8 Ansible"
+    v.gui = true
+  end
+```
+
+Discussion of this issue can be found on this issue in Vagrant's GitHub project: https://github.com/hashicorp/vagrant/issues/12557
+
 ### Base box
 
-By default, Vagrant creates a complete Islandora 8 1.1.0 instance. This version is the current offical release of Islandora.
+By default the Vagrantfile builds Islandora on a `ubuntu/focal64` base box.   
 
-If you want to build a VM that pulls in the latest Islandora code (suitable for a development environment, for example), before running `vagrant up`, open `Vagrantfile` and change the `$vagrantBox` variable to either 'ubuntu/bionic64' or 'centos/7':
-
-```
-# Available boxes are 'islandora/8', ubuntu/bionic64' and 'centos/7'
-# Use 'ubuntu/bionic64' or 'centos/7' to build a dev environment from scratch.
-# Use 'islandora/8' if you just want to download a ready to run VM.
-$vagrantBox = ENV.fetch("ISLANDORA_DISTRO", "islandora/8")
-```
-
+The [Islandora 8 base box](https://app.vagrantup.com/islandora/boxes/8) is now deprecated.
 
 ### System Resources
 
@@ -32,18 +41,9 @@ export ISLANDORA_VAGRANT_CPUS=4
 export ISLANDORA_VAGRANT_MEMORY=5040
 ```
 
-### Using CENTOS
-
-Ubuntu 18.04 is the default Linux distribution used by islandora-playbook. If you want to use CENTOS 7 instead, set the `ISLANDORA_DISTRO` environment variable to `centos/7`. The easiest way to do this is to export the environment variable into your shell before running Vagrant commands. Otherwise you will have to provide the variable for every Vagrant command you issue.
-
-```bash
-ISLANDORA_DISTRO="centos/7" vagrant up
-ISLANDORA_DISTRO="centos/7" vagrant ssh
-```
-
 ## Use
 
-Detailed installation and usage instructions can be found on the [official installation documentation for Islandora 8](https://islandora.github.io/documentation/installation/playbook/).
+Detailed installation and usage instructions can be found on the [official installation documentation for Islandora](https://islandora.github.io/documentation/installation/playbook/).
 
 ## Connect
 
@@ -97,7 +97,7 @@ You can access the IIIF interface at: http://localhost:8080/cantaloupe/iiif/2/
 
 ### JWT
 
-Islandora 8 uses JWT for authentication across the stack. Crayfish microservices, Fedora, and Drupal all use them. 
+Islandora uses JWT for authentication across the stack. Crayfish microservices, Fedora, and Drupal all use them.
 Crayfish and Fedora have been set up to use a default token of `islandora` to make testing easier. To use it, just set
 the following header in HTTP requests:
 
@@ -122,9 +122,8 @@ Islandora 8 Playbook installs an instance of the [Matomo](https://matomo.org/) (
 
 ## Roadmap
 
-Our highest priority moving forward is testing installation on different network topologies (e.g. 2, 3, 4 server setups, etc...) 
+The playbook is in maintenance mode as new development is focused on [ISLE](https://islandora.github.io/documentation/installation/docker-compose/) for development and production.
  
 ## Maintainers
 
 * [Jonathan Green](https://github.com/jonathangreen)
-

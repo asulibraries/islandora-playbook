@@ -10,15 +10,41 @@
 
   tasks:
 
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /etc/systemd/system/tomcat9.service.d
+        state: directory
+        mode: '0755'
+    
+    - name: Add Cantaloupe cache to Tomcat writable paths
+      lineinfile:
+        path: "/etc/systemd/system/tomcat9.service.d/override.conf"
+        regexp: 'var/cache/cantaloupe/$'
+        line: 'ReadWritePaths=/var/cache/cantaloupe/'
+        insertafter: EOF
+
+    - name: Add Cantaloupe log to Tomcat writable paths
+      lineinfile:
+        path: "/etc/systemd/system/tomcat9.service.d/override.conf"
+        regexp: 'var/log/cantaloupe/$'
+        line: 'ReadWritePaths=/var/log/cantaloupe'
+        insertafter: EOF
+
+    - name: restart daemon service
+      ansible.builtin.systemd:
+        daemon_reload: yes
+    
+    - name: start tomcat9
+      service:
+        name: tomcat9
+        state: started    
+
     - name: Add admin to fedoraAdmin role
       command: "{{ drush_path }} --root {{ drupal_core_path }} -y urol fedoraadmin admin"
 
     # Set jsonld module to strip ?_format=jsonld
     - name: Set JSONLD Config
       command: "{{ drush_path }} --root {{ drupal_core_path }} -y cset --input-format=yaml jsonld.settings remove_jsonld_format {{ drupal_jsonld_remove_format }}"
-
-    - name: Set Gemini URL
-      command: "{{ drush_path }} --root {{ drupal_core_path }} -y cset --input-format=yaml islandora.settings gemini_url {{ crayfish_gemini_base_url }}"
 
     - name: Set pseudo field bundles
       command: "{{ drush_path }} --root {{ drupal_core_path }} -y cset --input-format=yaml islandora.settings gemini_pseudo_bundles.{{ item.0 }} {{ item.1 }}"

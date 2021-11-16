@@ -4,14 +4,14 @@
     - fcrepo-install
 
 - include: db-mysql.yml
-  when: fcrepo_persistence == 'jdbc-mysql'
+  when: fcrepo_db_type == 'mysql' or fcrepo_persistence == 'jdbc-mysql'
   tags:
     - fedora
     - fedora-install
     - fedora-db
 
 - include: db-pgsql.yml
-  when: fcrepo_persistence == 'jdbc-postgresql'
+  when: fcrepo_db_type == 'postgresql' or fcrepo_persistence == 'jdbc-postgresql'
   become: yes
   tags:
     - fedora
