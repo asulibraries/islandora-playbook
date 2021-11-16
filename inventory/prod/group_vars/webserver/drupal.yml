@@ -20,7 +20,7 @@ drupal_composer_dependencies:
   - "drupal/transliterate_filenames"
   - "easyrdf/easyrdf"
   - "drupal/context:^4.0@beta"
-  - "--with-all-dependencies islandora/islandora_defaults:^2 islandora/openseadragon:^2 islandora/controlled_access_terms:^2 drupal/archivesspace:1.x-dev@dev"
+  - "--with-all-dependencies islandora/islandora_defaults:^2 islandora/openseadragon:^2 islandora/controlled_access_terms:^2 drupal/archivesspace:1.x-dev@dev islandora/islandora:^2"
   - "islandora-rdm/islandora_fits"
   - "drupal/diff"
   - "drupal/rrssb"
