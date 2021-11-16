@@ -13,18 +13,18 @@
 - name: copy nginx site.conf
   template:
     src: site.conf.j2
-    dest: /etc/nginx/sites-enabled/{{ domain }}
+    dest: /etc/nginx/sites-enabled/islandora
     owner: root
     group: root
     mode: '0644'
 
-- name: restart apache
+- name: restart nginx
   service:
     name: nginx
     state: restarted
 
-- name: stop apache
-  service:
-    name: apache2
-    state: stopped
+# - name: stop apache
+#   service:
+#     name: apache2
+#     state: stopped
     
