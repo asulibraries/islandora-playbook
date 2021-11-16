@@ -6,7 +6,7 @@ drupal_core_owner: "{{ ansible_user }}"
 drupal_composer_dependencies:
   - "zaporylie/composer-drupal-optimizations:^1.1" 
   - "drupal/devel:^4.0"
-  - "drupal/core-dev:^9.1"
+  - "drupal/core-dev:^9.2"
   - "drush/drush:^10.3"
   - "drupal/rdfui:^1.0-beta1"
   - "drupal/restui"
@@ -15,9 +15,8 @@ drupal_composer_dependencies:
   - "drupal/matomo:^1.7"
   - "drupal/pdf:1.x-dev"
   - "drupal/features"
-  - "drupal/config_split"
   - "drupal/admin_toolbar"
-  - "drupal/rest_oai_pmh:"
+  - "drupal/rest_oai_pmh"
   - "drupal/transliterate_filenames"
   - "easyrdf/easyrdf"
   - "drupal/context:^4.0@beta"
@@ -46,8 +45,7 @@ drupal_composer_dependencies:
   - "drupal/s3fs"
   - "drupal/s3fs_cors"
   - "drupal/cdn"
-  - "drupal/asu_derivatives"
-drupal_composer_project_package: "drupal/recommended-project:^9.1"
+drupal_composer_project_package: "drupal/recommended-project:^9.2"
 drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
 drupal_core_path: "{{ drupal_composer_install_dir }}/web"
 drupal_db_user: drupal8
@@ -73,7 +71,6 @@ drupal_enable_modules:
   - matomo
   - pdf
   - admin_toolbar
-  - config_split
   - features
   - admin_toolbar_tools
   - diff
