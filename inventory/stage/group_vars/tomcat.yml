@@ -24,7 +24,7 @@ fcrepo_db_root_user: fcrepo
 fcrepo_db_root_password: "{{ fcrepo_db_password }}"
 cantaloupe_symlink: "/opt/cantaloupe"
 
-tomcat8_java_opts:
+tomcat9_java_opts:
   - -Djava.awt.headless=true
   - -Dfile.encoding=UTF-8
   - -server
@@ -70,6 +70,6 @@ fcrepo_syn_tokens:
       - fedoraAdmin
     token: "{{ islandora_syn_token }}"
 
-fcrepo_version: "5.1.0"
+fcrepo_version: "5.1.2-RC-1"
 fcrepo_auth_header_name: "X-Islandora"
 fcrepo_syn_auth_header: "X-Islandora"

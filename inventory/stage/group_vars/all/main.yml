@@ -15,6 +15,7 @@ islandora_extra_ubuntu_packages:
   - vim
   - python3-mysqldb
   - awscli
+  - nginx
 
 islandora_extra_centos_packages:
   - wget
