@@ -6,3 +6,4 @@ roles/external
 .project
 .github
 islandora-repo
+.vscode
