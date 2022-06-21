@@ -23,6 +23,7 @@ local_setup:
 	vagrant ssh -c "cd /var/www/html/drupal && drush cset -y asu_default_fields.settings disable_handle_generation 1"
 	vagrant ssh -c "cd /var/www/html/drupal && drush cset -y islandora.settings fedora_url http://127.0.0.1:8080/fcrepo/rest"
 	vagrant ssh -c "cd /var/www/html/drupal && drush updb -y"
+	# fedora_url: 'http://127.0.0.1:8080/fcrepo/rest'
 
 update-settings-php:
 	vagrant ssh -c "echo '$$'\"databases['default']['default'] = ['database' => 'drupal8', 'username' => 'root', 'password' => 'islandora', 'host' => 'localhost', 'port' => '3306', 'driver' => 'mysql', 'prefix' => '', 'collation' => 'utf8mb4_general_ci'];\" >> /var/www/html/drupal/web/sites/default/settings.php"

@@ -37,6 +37,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Configure sync directory
   config.vm.synced_folder ".", home_dir + "/islandora"
   config.vm.synced_folder "./islandora-repo", "/var/www/html/drupal", owner: "vagrant", group: "www-data", mode: 0777
+  config.vm.synced_folder "./assets/drupal", "/etc/php7/conf.d", type: "rsync", rsync__args: ["-r", "--include=00_xdebug.ini", "--exclude=*"], owner: "www-data", group: "www-data", mode: 0600
   # config.vm.synced_folder "./claw-app/web/sites/default/files", home_dir + "/islandora/claw-app/web/sites/default/files", owner: "www-data", group: "www-data", mode: 0777, disabled: false
   # config.vm.synced_folder "./islandora", "/var/www/html/drupal/web/modules/contrib/islandora", disabled: true
   #config.vm.synced_folder "./islandora-repo/web/themes/custom/asulib_barrio", "/var/www/html/drupal/web/themes/custom/asulib_barrio"
