@@ -28,6 +28,16 @@ local_setup:
 update-settings-php:
 	vagrant ssh -c "echo '$$'\"databases['default']['default'] = ['database' => 'drupal8', 'username' => 'root', 'password' => 'islandora', 'host' => 'localhost', 'port' => '3306', 'driver' => 'mysql', 'prefix' => '', 'collation' => 'utf8mb4_general_ci'];\" >> /var/www/html/drupal/web/sites/default/settings.php"
 	vagrant ssh -c "echo '$$'\"settings['hash_salt'] = 'bc32ffdbba9cb51a7886fd3f5d8e2ff6';\" >> /var/www/html/drupal/web/sites/default/settings.php"
+	#$settings['flysystem']['fedora']['driver'] = 'fedora';
+	vagrant ssh -c "echo '$$'\"settings['flysystem']['fedora']['driver'] = 'fedora';\" >> /var/www/html/drupal/web/sites/default/settings.php"
+	#$settings['flysystem']['fedora']['config']['root'] = 'http://localhost:8081/fcrepo/rest/';
+	vagrant ssh -c "echo '$$'\"settings['flysystem']['fedora']['config']['root'] = 'http://localhost:8081/fcrepo/rest/';\" >> /var/www/html/drupal/web/sites/default/settings.php"
+	#$settings['reverse_proxy'] = true;
+	vagrant ssh -c "echo '$$'\"settings['reverse_proxy'] = true;\" >> /var/www/html/drupal/web/sites/default/settings.php"
+	#$settings['reverse_proxy_addresses'] = array ( 0 => '', );
+	vagrant ssh -c "echo '$$'\"settings['reverse_proxy_addresses'] = array ( 0 => '', );\" >> /var/www/html/drupal/web/sites/default/settings.php"
+	#$settings['file_private_path'] = '/var/www/html/private';
+	vagrant ssh -c "echo '$$'\"settings['file_private_path'] = '/var/www/html/private';\" >> /var/www/html/drupal/web/sites/default/settings.php"
 
 xhprof:
 	vagrant ssh -c "sudo apt-get update && sudo apt-get install php-pear --fix-missing"
