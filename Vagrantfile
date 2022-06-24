@@ -36,10 +36,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Configure sync directory
   config.vm.synced_folder ".", home_dir + "/islandora"
+  config.vm.synced_folder "./islandora-repo", "/var/www/html/drupal", owner: "vagrant", group: "www-data", mode: 0777
+  config.vm.synced_folder "./assets/drupal", "/etc/php7/conf.d", type: "rsync", rsync__args: ["-r", "--include=00_xdebug.ini", "--exclude=*"], owner: "www-data", group: "www-data", mode: 0600
   # config.vm.synced_folder "./claw-app/web/sites/default/files", home_dir + "/islandora/claw-app/web/sites/default/files", owner: "www-data", group: "www-data", mode: 0777, disabled: false
   # config.vm.synced_folder "./islandora", "/var/www/html/drupal/web/modules/contrib/islandora", disabled: true
-  config.vm.synced_folder "./islandora-repo/web/themes/custom/asulib_barrio", "/var/www/html/drupal/web/themes/custom/asulib_barrio"
-  config.vm.synced_folder "./islandora-repo/web/modules/custom", "/var/www/html/drupal/web/modules/custom", owner: "vagrant", group: "vagrant", mode: 0755
+  #config.vm.synced_folder "./islandora-repo/web/themes/custom/asulib_barrio", "/var/www/html/drupal/web/themes/custom/asulib_barrio"
+  #config.vm.synced_folder "./islandora-repo/web/modules/custom", "/var/www/html/drupal/web/modules/custom", owner: "vagrant", group: "vagrant", mode: 0755
   config.vm.boot_timeout = 99999999
 
   config.vm.network :forwarded_port, guest: 8000, host: 8000 # Apache

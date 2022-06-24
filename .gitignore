@@ -5,3 +5,6 @@ roles/external
 .DS_Store
 .project
 .github
+islandora-repo
+.vscode
+.asurepo_vault_pass
